@@ -13,8 +13,11 @@ import { AlertCircleIcon } from "@/components/ui/icon";
 import { useState } from "react";
 import { Center } from "@/components/ui/center";
 import { View } from "react-native";
+import { AuthContext } from "../utils/authContext";
+import { useContext } from "react";
 
 export default function LoginScreen() {
+  const authContext = useContext(AuthContext);
   const [isInvalid, setIsInvalid] = useState({
     username: false,
     password: false,
@@ -23,16 +26,16 @@ export default function LoginScreen() {
     username: "",
     password: "",
   });
-  const handleSubmit = () => {
-    const updatedInvalidState = {
-      username: inputValue.username === "",
-      password: inputValue.password === "",
-    };
-    setIsInvalid(updatedInvalidState);
+  // const handleSubmit = () => {
+  //   const updatedInvalidState = {
+  //     username: inputValue.username === "",
+  //     password: inputValue.password === "",
+  //   };
+  //   setIsInvalid(updatedInvalidState);
 
-    if (!updatedInvalidState.username && !updatedInvalidState.password) {
-    }
-  };
+  //   if (!updatedInvalidState.username && !updatedInvalidState.password) {
+  //   }
+  // };
   return (
     <Center className="h-full w-full">
       <VStack className="w-full gap-y-6 px-10">
@@ -79,13 +82,7 @@ export default function LoginScreen() {
           </FormControlError>
         </FormControl>
         <View className="flex flex-row gap-x-4">
-          <Button
-            className=" rounded-md"
-            size="xl"
-            onPress={() => {
-              handleSubmit();
-            }}
-          >
+          <Button className=" rounded-md" size="xl" onPress={authContext.logIn}>
             <ButtonText>Sign In</ButtonText>
           </Button>
           <Button className="" size="xl" variant="link" onPress={() => {}}>
