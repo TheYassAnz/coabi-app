@@ -1,3 +1,4 @@
+import { AuthService } from "@/services/server/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { SplashScreen, useRouter } from "expo-router";
@@ -36,9 +37,17 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   };
 
   const logIn = (username: string, password: string) => {
-    setIsLoggedIn(true);
-    storeAuthState({ isLoggedIn: true });
-    router.replace("/");
+    const authentication = new AuthService();
+    authentication
+      .login({ username, password })
+      .then(() => {
+        setIsLoggedIn(true);
+        storeAuthState({ isLoggedIn: true });
+        router.replace("/");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
   const logOut = () => {
     setIsLoggedIn(false);
