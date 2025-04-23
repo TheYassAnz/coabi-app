@@ -26,16 +26,17 @@ export default function LoginScreen() {
     username: "",
     password: "",
   });
-  // const handleSubmit = () => {
-  //   const updatedInvalidState = {
-  //     username: inputValue.username === "",
-  //     password: inputValue.password === "",
-  //   };
-  //   setIsInvalid(updatedInvalidState);
+  const handleSubmit = () => {
+    const updatedInvalidState = {
+      username: inputValue.username === "",
+      password: inputValue.password === "",
+    };
+    setIsInvalid(updatedInvalidState);
 
-  //   if (!updatedInvalidState.username && !updatedInvalidState.password) {
-  //   }
-  // };
+    if (!updatedInvalidState.username && !updatedInvalidState.password) {
+      authContext.logIn(inputValue.username, inputValue.password);
+    }
+  };
   return (
     <Center className="h-full w-full">
       <VStack className="w-full gap-y-6 px-10">
@@ -82,7 +83,7 @@ export default function LoginScreen() {
           </FormControlError>
         </FormControl>
         <View className="flex flex-row gap-x-4">
-          <Button className=" rounded-md" size="xl" onPress={authContext.logIn}>
+          <Button className=" rounded-md" size="xl" onPress={handleSubmit}>
             <ButtonText>Sign In</ButtonText>
           </Button>
           <Button className="" size="xl" variant="link" onPress={() => {}}>
