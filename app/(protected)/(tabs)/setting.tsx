@@ -1,5 +1,6 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { AuthContext } from "@/utils/authContext";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useContext } from "react";
 import { Text, View, StyleSheet } from "react-native";
 
@@ -10,6 +11,7 @@ export default function SettingScreen() {
       <Text style={styles.text}>Settings screen</Text>
       <Button className="mt-5" onPress={authState.logOut}>
         <ButtonText>Log Out</ButtonText>
+        <MaterialIcons name="logout" color="white" />
       </Button>
     </View>
   );

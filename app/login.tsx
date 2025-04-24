@@ -15,6 +15,9 @@ import { Center } from "@/components/ui/center";
 import { View } from "react-native";
 import { AuthContext } from "../utils/authContext";
 import { useContext } from "react";
+import { router } from "expo-router";
+import { Heading } from "@/components/ui/heading";
+import { Text } from "@/components/ui/text";
 
 export default function LoginScreen() {
   const authContext = useContext(AuthContext);
@@ -39,10 +42,15 @@ export default function LoginScreen() {
   };
   return (
     <Center className="h-full w-full">
-      <VStack className="w-full gap-y-6 px-10">
+      <VStack className="w-full px-10" space="xl">
+        <VStack>
+          <Heading size="4xl">Sign In</Heading>
+          <Text>Sign in to start using COABI app</Text>
+        </VStack>
+
         <FormControl isInvalid={isInvalid.username} size="lg">
           <FormControlLabel>
-            <FormControlLabelText size="2xl">Username</FormControlLabelText>
+            <FormControlLabelText size="xl">Username</FormControlLabelText>
           </FormControlLabel>
           <Input className="my-1" size="xl">
             <InputField
@@ -64,7 +72,7 @@ export default function LoginScreen() {
         </FormControl>
         <FormControl isInvalid={isInvalid.password} size="lg">
           <FormControlLabel>
-            <FormControlLabelText size="2xl">Password</FormControlLabelText>
+            <FormControlLabelText size="xl">Password</FormControlLabelText>
           </FormControlLabel>
           <Input className="my-1" size="xl">
             <InputField
@@ -84,10 +92,17 @@ export default function LoginScreen() {
           </FormControlError>
         </FormControl>
         <View className="flex flex-row gap-x-4">
-          <Button className=" rounded-md" size="xl" onPress={handleSubmit}>
+          <Button className=" rounded-md" size="md" onPress={handleSubmit}>
             <ButtonText>Sign In</ButtonText>
           </Button>
-          <Button className="" size="xl" variant="link" onPress={() => {}}>
+          <Button
+            className=""
+            size="md"
+            variant="link"
+            onPress={() => {
+              router.replace("/register");
+            }}
+          >
             <ButtonText>Sign Up</ButtonText>
           </Button>
         </View>
