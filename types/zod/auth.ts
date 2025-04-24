@@ -10,7 +10,10 @@ export const BaseLoginSchema = z.object({
 
 export const LoginSchema = BaseLoginSchema;
 
-export const LoginResponseSchema = z.string();
+export const LoginResponseSchema = z.object({
+  message: z.string(),
+  data: z.string(),
+});
 
 export type Register = z.infer<typeof RegisterSchema>;
 export type Login = z.infer<typeof LoginSchema>;

@@ -46,6 +46,7 @@ export default function LoginScreen() {
           </FormControlLabel>
           <Input className="my-1" size="xl">
             <InputField
+              autoCapitalize="none"
               type="text"
               value={inputValue.username}
               onChangeText={(text) =>
