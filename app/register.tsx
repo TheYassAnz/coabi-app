@@ -18,7 +18,7 @@ import { AuthService } from "@/services/server/auth";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { SafeAreaView } from "react-native";
+import { Alert, SafeAreaView } from "react-native";
 
 export default function RegisterPage() {
   const [inputValue, setInputValue]: any = useState({
@@ -55,7 +55,10 @@ export default function RegisterPage() {
     registration
       .register(inputValue)
       .then(() => {
-        console.log("OK");
+        Alert.alert("Congratulations!", "Account created");
+        setTimeout(() => {
+          router.replace("/login");
+        }, 3000);
       })
       .catch((error) => {
         console.log(error);

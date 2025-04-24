@@ -3,6 +3,7 @@ import {
   Login,
   LoginResponse,
   LoginResponseSchema,
+  RegisterResponseSchema,
 } from "../../types/zod/auth";
 import { UserResponse, UserResponseSchema } from "../../types/zod/user";
 import { APIService } from "./api";
@@ -15,7 +16,7 @@ export class AuthService extends APIService {
   async register(data: Register): Promise<UserResponse> {
     try {
       const response = await this.post<Register, any>(`/auth/register/`, data);
-      return UserResponseSchema.parse(response.data);
+      return RegisterResponseSchema.parse(response.data);
     } catch (error: any) {
       throw error?.response?.data || new Error("Unknown error occurred.");
     }
