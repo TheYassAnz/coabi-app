@@ -15,6 +15,12 @@ export const LoginResponseSchema = z.object({
   data: z.string(),
 });
 
+export const RegisterResponseSchema = z.object({
+  message: z.string(),
+  data: z.object({}),
+});
+
 export type Register = z.infer<typeof RegisterSchema>;
 export type Login = z.infer<typeof LoginSchema>;
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
+export type RegisterResponse = z.infer<typeof RegisterResponseSchema>;
