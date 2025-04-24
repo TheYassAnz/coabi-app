@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { SplashScreen, useRouter } from "expo-router";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
+import { Alert } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -46,7 +47,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         router.replace("/");
       })
       .catch((error) => {
-        console.error(error);
+        Alert.alert("Credentials error", "Username and password incorrect");
       });
   };
   const logOut = () => {
