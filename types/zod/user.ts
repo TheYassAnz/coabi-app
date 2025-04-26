@@ -4,7 +4,6 @@ export const BaseUserSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   username: z.string(),
-  password: z.string().min(8),
   age: z.number().min(0),
   description: z.string().nullable(),
   email: z.string().email(),

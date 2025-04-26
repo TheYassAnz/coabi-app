@@ -1,7 +1,11 @@
 import { z } from "zod";
-import { BaseUserSchema } from "./user";
+import { UserResponseSchema } from "./user";
 
-export const RegisterSchema = BaseUserSchema;
+export const RegisterSchema = z.object({
+  username: z.string(),
+  password: z.string().min(8),
+  email: z.string().email(),
+});
 
 export const BaseLoginSchema = z.object({
   username: z.string(),
@@ -11,14 +15,10 @@ export const BaseLoginSchema = z.object({
 export const LoginSchema = BaseLoginSchema;
 
 export const LoginResponseSchema = z.object({
-  message: z.string(),
-  data: z.string(),
+  token: z.string(),
 });
 
-export const RegisterResponseSchema = z.object({
-  message: z.string(),
-  data: z.object({}),
-});
+export const RegisterResponseSchema = UserResponseSchema;
 
 export type Register = z.infer<typeof RegisterSchema>;
 export type Login = z.infer<typeof LoginSchema>;
