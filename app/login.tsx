@@ -91,21 +91,21 @@ export default function LoginScreen() {
             <FormControlErrorText>Password is required.</FormControlErrorText>
           </FormControlError>
         </FormControl>
-        <View className="flex flex-row gap-x-4">
-          <Button className=" rounded-md" size="md" onPress={handleSubmit}>
+        <VStack space="sm">
+          <Button className=" rounded-md" size="lg" onPress={handleSubmit}>
             <ButtonText>Sign In</ButtonText>
           </Button>
           <Button
             className=""
-            size="md"
-            variant="link"
+            size="lg"
+            variant="outline"
             onPress={() => {
               router.replace("/register");
             }}
           >
             <ButtonText>Sign Up</ButtonText>
           </Button>
-        </View>
+        </VStack>
       </VStack>
     </Center>
   );
