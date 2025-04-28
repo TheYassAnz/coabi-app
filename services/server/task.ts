@@ -16,7 +16,10 @@ export class TaskService extends APIService {
       const response = await this.get<any[]>(`/tasks`);
       return response.data.map((task) => TaskResponseSchema.parse(task));
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -25,7 +28,10 @@ export class TaskService extends APIService {
       const response = await this.post<TaskPost, any>(`/tasks/`, data);
       return TaskResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -34,7 +40,10 @@ export class TaskService extends APIService {
       const response = await this.get<any>(`/tasks/${id}`);
       return TaskResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -43,7 +52,10 @@ export class TaskService extends APIService {
       const response = await this.patch<TaskPatch, any>(`/tasks/${id}`, data);
       return TaskResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -54,7 +66,10 @@ export class TaskService extends APIService {
         throw new Error("Failed to delete task.");
       }
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -66,7 +81,10 @@ export class TaskService extends APIService {
       const response = await this.get<any[]>(`/tasks/filter?${query}`);
       return response.data.map((task) => TaskResponseSchema.parse(task));
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 }

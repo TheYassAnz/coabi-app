@@ -16,7 +16,10 @@ export class EventService extends APIService {
       const response = await this.get<any[]>(`/events`);
       return response.data.map((event) => EventResponseSchema.parse(event));
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -25,7 +28,10 @@ export class EventService extends APIService {
       const response = await this.post<EventPost, any>(`/events/`, data);
       return EventResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -34,7 +40,10 @@ export class EventService extends APIService {
       const response = await this.get<any>(`/events/${id}`);
       return EventResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -43,7 +52,10 @@ export class EventService extends APIService {
       const response = await this.patch<EventPatch, any>(`/events/${id}`, data);
       return EventResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -54,7 +66,10 @@ export class EventService extends APIService {
         throw new Error("Failed to delete event.");
       }
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -66,7 +81,10 @@ export class EventService extends APIService {
       const response = await this.get<any[]>(`/events/filter?${query}`);
       return response.data.map((event) => EventResponseSchema.parse(event));
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 }

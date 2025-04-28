@@ -39,14 +39,7 @@ export const AccessResponseSchema = z.object({
   accessToken: z.string(),
 });
 
-const BaseCsrfSchema = z.object({
-  csrfToken: z.string(),
-});
-
-export const CsrfResponseSchema = BaseCsrfSchema;
-
 export type Register = z.infer<typeof RegisterSchema>;
 export type RegisterResponse = z.infer<typeof RegisterResponseSchema>;
 export type Access = z.infer<typeof AccessSchema>;
 export type AccessResponse = z.infer<typeof AccessResponseSchema>;
-export type CsrfResponse = z.infer<typeof CsrfResponseSchema>;
