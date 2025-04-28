@@ -1,8 +1,15 @@
 import { z } from "zod";
 
-export const BaseRuleSchema = z.object({
-  title: z.string(),
-  description: z.string().nullable(),
+const BaseRuleSchema = z.object({
+  title: z
+    .string()
+    .max(50, "Keep under 50 characters please")
+    .nonempty("Required"),
+  description: z
+    .string()
+    .max(500, "Keep under 500 characters please")
+    .nonempty("Required")
+    .nullable(),
 });
 
 export const RulePostSchema = BaseRuleSchema.extend({
