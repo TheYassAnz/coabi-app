@@ -1,17 +1,25 @@
 import { Button, ButtonText } from "@/components/ui/button";
-import { AuthContext } from "@/utils/authContext";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useContext } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Alert } from "react-native";
+import { AuthService } from "@/services/server/auth";
 
 export default function SettingScreen() {
-  const authState = useContext(AuthContext);
+  const authService = new AuthService();
+
+  const submit = async () => {
+    try {
+      await authService.logout();
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Settings screen</Text>
-      <Button className="mt-5" onPress={authState.logOut}>
+      <Button className="mt-5" onPress={submit}>
         <ButtonText>Log Out</ButtonText>
-        <MaterialIcons name="logout" color="white" />
+        <MaterialIcons name="logout" color="white" size={20} />
       </Button>
     </View>
   );
