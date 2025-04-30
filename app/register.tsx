@@ -8,73 +8,87 @@ import {
   FormControlLabel,
   FormControlLabelText,
 } from "@/components/ui/form-control";
-import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
 import { AlertCircleIcon } from "@/components/ui/icon";
-import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
-import { Text } from "@/components/ui/text";
+import { Input, InputField, InputSlot } from "@/components/ui/input";
 import { VStack } from "@/components/ui/vstack";
 import { AuthService } from "@/services/server/auth";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, SafeAreaView } from "react-native";
+import { useForm } from "react-hook-form";
+import { RegisterSchema } from "@/types/zod/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function RegisterPage() {
-  const [inputValue, setInputValue]: any = useState({
-    email: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [isInvalid, setIsInvalid] = useState({
-    email: false,
-    username: false,
-    password: false,
-    confirmPassword: false,
+  const {
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+    trigger,
+  } = useForm({
+    resolver: zodResolver(RegisterSchema),
+    defaultValues: {
+      email: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+    },
+    mode: "onBlur",
+    reValidateMode: "onChange",
   });
 
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowPassword = () => {
-    setShowPassword((state) => {
-      return !state;
-    });
+    setShowPassword((state) => !state);
   };
 
-  const handleSubmit = () => {
-    const updatedInvalidState = {
-      email: inputValue.email === "",
-      username: inputValue.username === "",
-      password: inputValue.password === "",
-      confirmPassword: inputValue.confirmPassword === "",
-    };
-    setIsInvalid(updatedInvalidState);
+  const onSubmit = async (data: any) => {
     const registration = new AuthService();
-    registration
-      .register(inputValue)
-      .then(() => {
-        Alert.alert("Congratulations!", "Account created");
-        setTimeout(() => {
-          router.replace("/login");
-        }, 3000);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    try {
+      await registration.register(data);
+      Alert.alert("Congratulations!", "Account created");
+      router.replace("/login");
+      reset();
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+    }
   };
 
   return (
     <SafeAreaView>
       <Center className="h-full w-full">
         <VStack className="w-full px-10" space="xl">
-          <VStack>
-            <Heading size="4xl">Sign Up</Heading>
-            <Text>Sign up to start using COABI app</Text>
-          </VStack>
+          <FormControl size="lg" isInvalid={!!errors.username}>
+            <FormControlLabel>
+              <FormControlLabelText size="xl">Username</FormControlLabelText>
+            </FormControlLabel>
+            <HStack space="md" className="w-full items-center">
+              <Input className="my-1 flex-1" size="xl">
+                <InputField
+                  autoCapitalize="none"
+                  type="text"
+                  value={watch("username")}
+                  onChangeText={(text) => setValue("username", text)}
+                  onBlur={() => trigger("username")}
+                />
+              </Input>
+            </HStack>
+            {errors.username && (
+              <FormControlError>
+                <FormControlErrorIcon as={AlertCircleIcon} />
+                <FormControlErrorText>
+                  {errors.username.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
 
-          <FormControl size="lg" isInvalid={isInvalid.email}>
+          <FormControl size="lg" isInvalid={!!errors.email}>
             <FormControlLabel>
               <FormControlLabelText size="xl">Email</FormControlLabelText>
             </FormControlLabel>
@@ -82,41 +96,22 @@ export default function RegisterPage() {
               <InputField
                 autoCapitalize="none"
                 type="text"
-                value={inputValue.email}
-                onChangeText={(text) =>
-                  setInputValue((prev: any) => ({ ...prev, email: text }))
-                }
+                value={watch("email")}
+                onChangeText={(text) => setValue("email", text)}
+                onBlur={() => trigger("email")}
               />
             </Input>
-            <FormControlError>
-              <FormControlErrorIcon as={AlertCircleIcon} />
-              <FormControlErrorText>Email is required.</FormControlErrorText>
-            </FormControlError>
-          </FormControl>
-          <FormControl size="lg" isInvalid={isInvalid.username}>
-            <FormControlLabel>
-              <FormControlLabelText size="xl">Username</FormControlLabelText>
-            </FormControlLabel>
-            <HStack space="md" className="w-full items-center">
-              <Text size="2xl">@</Text>
-              <Input className="my-1 flex-1" size="xl">
-                <InputField
-                  autoCapitalize="none"
-                  type="text"
-                  value={inputValue.username}
-                  onChangeText={(text) =>
-                    setInputValue((prev: any) => ({ ...prev, username: text }))
-                  }
-                />
-              </Input>
-            </HStack>
-            <FormControlError>
-              <FormControlErrorIcon as={AlertCircleIcon} />
-              <FormControlErrorText>Username is required.</FormControlErrorText>
-            </FormControlError>
+            {errors.email && (
+              <FormControlError>
+                <FormControlErrorIcon as={AlertCircleIcon} />
+                <FormControlErrorText>
+                  {errors.email.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
           </FormControl>
 
-          <FormControl size="lg" isInvalid={isInvalid.password}>
+          <FormControl size="lg" isInvalid={!!errors.password}>
             <FormControlLabel>
               <FormControlLabelText size="xl">Password</FormControlLabelText>
             </FormControlLabel>
@@ -124,10 +119,9 @@ export default function RegisterPage() {
               <InputField
                 autoCapitalize="none"
                 type={showPassword ? "text" : "password"}
-                value={inputValue.password}
-                onChangeText={(text) =>
-                  setInputValue((prev: any) => ({ ...prev, password: text }))
-                }
+                value={watch("password")}
+                onChangeText={(text) => setValue("password", text)}
+                onBlur={() => trigger("password")}
               />
               <InputSlot className="pr-3" onPress={handleShowPassword}>
                 {showPassword ? (
@@ -137,13 +131,17 @@ export default function RegisterPage() {
                 )}
               </InputSlot>
             </Input>
-            <FormControlError>
-              <FormControlErrorIcon as={AlertCircleIcon} />
-              <FormControlErrorText>Password is required.</FormControlErrorText>
-            </FormControlError>
+            {errors.password && (
+              <FormControlError>
+                <FormControlErrorIcon as={AlertCircleIcon} />
+                <FormControlErrorText>
+                  {errors.password.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
           </FormControl>
 
-          <FormControl size="lg" isInvalid={isInvalid.confirmPassword}>
+          <FormControl size="lg" isInvalid={!!errors.confirmPassword}>
             <FormControlLabel>
               <FormControlLabelText size="xl">
                 Confirm Password
@@ -153,13 +151,9 @@ export default function RegisterPage() {
               <InputField
                 autoCapitalize="none"
                 type={showPassword ? "text" : "password"}
-                value={inputValue.confirmPassword}
-                onChangeText={(text) =>
-                  setInputValue((prev: any) => ({
-                    ...prev,
-                    confirmPassword: text,
-                  }))
-                }
+                value={watch("confirmPassword")}
+                onChangeText={(text) => setValue("confirmPassword", text)}
+                onBlur={() => trigger("confirmPassword")}
               />
               <InputSlot className="pr-3" onPress={handleShowPassword}>
                 {showPassword ? (
@@ -169,16 +163,22 @@ export default function RegisterPage() {
                 )}
               </InputSlot>
             </Input>
-            <FormControlError>
-              <FormControlErrorIcon as={AlertCircleIcon} />
-              <FormControlErrorText>
-                Confirm Password is required.
-              </FormControlErrorText>
-            </FormControlError>
+            {errors.confirmPassword && (
+              <FormControlError>
+                <FormControlErrorIcon as={AlertCircleIcon} />
+                <FormControlErrorText>
+                  {errors.confirmPassword.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
           </FormControl>
 
           <HStack space="lg">
-            <Button className=" rounded-md" size="md" onPress={handleSubmit}>
+            <Button
+              className=" rounded-md"
+              size="md"
+              onPress={handleSubmit(onSubmit)}
+            >
               <ButtonText>Sign Up</ButtonText>
             </Button>
             <Button

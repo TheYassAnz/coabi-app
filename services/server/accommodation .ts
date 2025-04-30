@@ -18,7 +18,10 @@ export class AccommodationService extends APIService {
         AccommodationResponseSchema.parse(accommodation),
       );
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -32,7 +35,10 @@ export class AccommodationService extends APIService {
       );
       return AccommodationResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -41,7 +47,10 @@ export class AccommodationService extends APIService {
       const response = await this.get<any>(`/accommodations/${id}`);
       return AccommodationResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -56,7 +65,10 @@ export class AccommodationService extends APIService {
       );
       return AccommodationResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -67,7 +79,10 @@ export class AccommodationService extends APIService {
         throw new Error("Failed to delete accommodation.");
       }
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 }

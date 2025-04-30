@@ -1,15 +1,28 @@
 import { Redirect, Stack } from "expo-router";
-import { useContext } from "react";
-import { AuthContext } from "../../utils/authContext";
+import * as SecureStore from "expo-secure-store";
+import { useState, useEffect } from "react";
 
 export default function ProtectedLayout() {
-  const authState = useContext(AuthContext);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  if (!authState.isReady) {
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = await SecureStore.getItemAsync("accessToken");
+        setIsAuthenticated(!!token);
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  if (isAuthenticated === null) {
     return null;
   }
 
-  if (!authState.isLoggedIn) {
+  if (!isAuthenticated) {
     return <Redirect href="/login" />;
   }
 

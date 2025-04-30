@@ -1,14 +1,20 @@
 import { z } from "zod";
 
-export const BaseRefundSchema = z.object({
-  title: z.string(),
-  toRefund: z.number(),
+const BaseRefundSchema = z.object({
+  title: z.string().max(50, "Keep under 50 characters please"),
+  toRefund: z
+    .number()
+    .min(0, "Refund cannot be inferior to 0")
+    .max(1000000, "Not possible"),
   done: z.boolean(),
 });
 
 export const RefundBatchPostSchema = z.object({
-  title: z.string(),
-  toSplit: z.number(),
+  title: z.string().max(50, "Keep under 50 characters please"),
+  toSplit: z
+    .number()
+    .min(0, "Refund cannot be inferior to 0")
+    .max(1000000, "Not possible"),
   userId: z.string(),
   roommateIds: z.string().array(),
 });

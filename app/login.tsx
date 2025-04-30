@@ -4,42 +4,50 @@ import {
   FormControl,
   FormControlError,
   FormControlErrorText,
-  FormControlErrorIcon,
   FormControlLabel,
   FormControlLabelText,
 } from "@/components/ui/form-control";
 import { Input, InputField } from "@/components/ui/input";
-import { AlertCircleIcon } from "@/components/ui/icon";
-import { useState } from "react";
 import { Center } from "@/components/ui/center";
 import { View } from "react-native";
-import { AuthContext } from "../utils/authContext";
-import { useContext } from "react";
 import { router } from "expo-router";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
+import { AccessSchema } from "@/types/zod/auth";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AuthService } from "@/services/server/auth";
+import * as SecureStore from "expo-secure-store";
+import { Alert } from "react-native";
 
 export default function LoginScreen() {
-  const authContext = useContext(AuthContext);
-  const [isInvalid, setIsInvalid] = useState({
-    username: false,
-    password: false,
+  const {
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+    trigger,
+  } = useForm({
+    resolver: zodResolver(AccessSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+    mode: "onBlur",
+    reValidateMode: "onChange",
   });
-  const [inputValue, setInputValue] = useState({
-    username: "",
-    password: "",
-  });
-  const handleSubmit = () => {
-    const updatedInvalidState = {
-      username: inputValue.username === "",
-      password: inputValue.password === "",
-    };
-    setIsInvalid(updatedInvalidState);
 
-    if (!updatedInvalidState.username && !updatedInvalidState.password) {
-      authContext.logIn(inputValue.username, inputValue.password);
+  const onSubmit = async (data: { username: string; password: string }) => {
+    try {
+      const authService = new AuthService();
+      const login = await authService.login(data);
+      await SecureStore.setItemAsync("accessToken", login.accessToken);
+      router.replace("/");
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
     }
   };
+
   return (
     <Center className="h-full w-full">
       <VStack className="w-full px-10" space="xl">
@@ -48,7 +56,7 @@ export default function LoginScreen() {
           <Text>Sign in to start using COABI app</Text>
         </VStack>
 
-        <FormControl isInvalid={isInvalid.username} size="lg">
+        <FormControl isInvalid={!!errors.username} size="lg">
           <FormControlLabel>
             <FormControlLabelText size="xl">Username</FormControlLabelText>
           </FormControlLabel>
@@ -56,43 +64,47 @@ export default function LoginScreen() {
             <InputField
               autoCapitalize="none"
               type="text"
-              value={inputValue.username}
-              onChangeText={(text) =>
-                setInputValue({
-                  ...inputValue,
-                  username: text,
-                })
-              }
+              value={watch("username")}
+              onChangeText={(text) => setValue("username", text)}
+              onBlur={() => trigger("username")}
             />
           </Input>
-          <FormControlError>
-            <FormControlErrorIcon as={AlertCircleIcon} />
-            <FormControlErrorText>Username is required.</FormControlErrorText>
-          </FormControlError>
+          {errors.username && (
+            <FormControlError>
+              <FormControlErrorText>
+                {errors.username.message}
+              </FormControlErrorText>
+            </FormControlError>
+          )}
         </FormControl>
-        <FormControl isInvalid={isInvalid.password} size="lg">
+
+        <FormControl isInvalid={!!errors.password} size="lg">
           <FormControlLabel>
             <FormControlLabelText size="xl">Password</FormControlLabelText>
           </FormControlLabel>
           <Input className="my-1" size="xl">
             <InputField
               type="password"
-              value={inputValue.password}
-              onChangeText={(text) =>
-                setInputValue({
-                  ...inputValue,
-                  password: text,
-                })
-              }
+              value={watch("password")}
+              onChangeText={(text) => setValue("password", text)}
+              onBlur={() => trigger("password")}
             />
           </Input>
-          <FormControlError>
-            <FormControlErrorIcon as={AlertCircleIcon} />
-            <FormControlErrorText>Password is required.</FormControlErrorText>
-          </FormControlError>
+          {errors.password && (
+            <FormControlError>
+              <FormControlErrorText>
+                {errors.password.message}
+              </FormControlErrorText>
+            </FormControlError>
+          )}
         </FormControl>
+
         <View className="flex flex-row gap-x-4">
-          <Button className=" rounded-md" size="md" onPress={handleSubmit}>
+          <Button
+            className="rounded-md"
+            size="md"
+            onPress={handleSubmit(onSubmit)}
+          >
             <ButtonText>Sign In</ButtonText>
           </Button>
           <Button

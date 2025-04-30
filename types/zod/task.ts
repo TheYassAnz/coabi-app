@@ -1,8 +1,15 @@
 import { z } from "zod";
 
-export const BaseTaskSchema = z.object({
-  name: z.string(),
-  description: z.string().nullable(),
+const BaseTaskSchema = z.object({
+  name: z
+    .string()
+    .max(50, "Keep under 50 characters please")
+    .nonempty("Required"),
+  description: z
+    .string()
+    .max(200, "Keep under 200 characters please")
+    .nullable(),
+  weekly: z.boolean(),
 });
 
 export const TaskPostSchema = BaseTaskSchema.extend({

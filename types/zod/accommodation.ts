@@ -1,11 +1,20 @@
 import { z } from "zod";
 
-export const BaseAccommodationSchema = z.object({
-  name: z.string(),
-  code: z.string(),
-  location: z.string(),
-  postalCode: z.number(),
-  country: z.string(),
+const BaseAccommodationSchema = z.object({
+  name: z
+    .string()
+    .max(50, "Keep under 50 characters please")
+    .nonempty("Required"),
+  code: z.string().max(12),
+  location: z
+    .string()
+    .max(30, "Keep under 30 characters please")
+    .nonempty("Required"),
+  postalCode: z.number().min(501, "Not possible").max(100000, "Not possible"),
+  country: z
+    .string()
+    .max(30, "Keep under 30 characters please")
+    .nonempty("Required"),
 });
 
 export const AccommodationPostSchema = BaseAccommodationSchema;

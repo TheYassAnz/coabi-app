@@ -16,7 +16,10 @@ export class RefundService extends APIService {
       const response = await this.get<any[]>(`/refunds`);
       return response.data.map((refund) => RefundResponseSchema.parse(refund));
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -28,7 +31,10 @@ export class RefundService extends APIService {
       );
       return response.data.map((refund) => RefundResponseSchema.parse(refund));
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -37,7 +43,10 @@ export class RefundService extends APIService {
       const response = await this.get<any>(`/refunds/${id}`);
       return RefundResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -52,7 +61,10 @@ export class RefundService extends APIService {
       );
       return RefundResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -63,7 +75,10 @@ export class RefundService extends APIService {
         throw new Error("Failed to delete refund.");
       }
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -75,7 +90,10 @@ export class RefundService extends APIService {
       const response = await this.get<any[]>(`/refunds/filter?${query}`);
       return response.data.map((refund) => RefundResponseSchema.parse(refund));
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 }

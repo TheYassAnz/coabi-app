@@ -15,7 +15,10 @@ export class UserService extends APIService {
       const response = await this.get<any[]>(`/users`);
       return response.data.map((user) => UserResponseSchema.parse(user));
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -24,7 +27,10 @@ export class UserService extends APIService {
       const response = await this.get<any>(`/users/${id}`);
       return UserResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -33,7 +39,10 @@ export class UserService extends APIService {
       const response = await this.patch<UserPatch, any>(`/users/${id}`, data);
       return UserResponseSchema.parse(response.data);
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -44,7 +53,10 @@ export class UserService extends APIService {
         throw new Error("Failed to delete user.");
       }
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 
@@ -56,7 +68,10 @@ export class UserService extends APIService {
       const response = await this.get<any[]>(`/users/filter?${query}`);
       return response.data.map((user) => UserResponseSchema.parse(user));
     } catch (error: any) {
-      throw error?.response?.data || new Error("Unknown error occurred.");
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
     }
   }
 }

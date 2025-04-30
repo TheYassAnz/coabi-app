@@ -1,10 +1,17 @@
 import { z } from "zod";
 
-export const BaseEventSchema = z.object({
-  title: z.string(),
-  description: z.string().nullable(),
-  plannedDate: z.coerce.date(),
-  endDate: z.coerce.date(),
+const BaseEventSchema = z.object({
+  title: z.string().max(50, "Keep under 50 characters please"),
+  description: z
+    .string()
+    .max(500, "Keep under 500 characters please")
+    .nullable(),
+  plannedDate: z.coerce
+    .date()
+    .refine((date) => date !== null, { message: "Required" }),
+  endDate: z.coerce
+    .date()
+    .refine((date) => date !== null, { message: "Required" }),
 });
 
 export const EventPostSchema = BaseEventSchema.extend({
