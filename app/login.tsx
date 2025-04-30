@@ -99,25 +99,21 @@ export default function LoginScreen() {
           )}
         </FormControl>
 
-        <View className="flex flex-row gap-x-4">
-          <Button
-            className="rounded-md"
-            size="md"
-            onPress={handleSubmit(onSubmit)}
-          >
+        <VStack space="sm">
+          <Button variant="solid" size="md" onPress={handleSubmit(onSubmit)}>
             <ButtonText>Sign In</ButtonText>
           </Button>
           <Button
             className=""
             size="md"
-            variant="link"
+            variant="outline"
             onPress={() => {
               router.replace("/register");
             }}
           >
             <ButtonText>Sign Up</ButtonText>
           </Button>
-        </View>
+        </VStack>
       </VStack>
     </Center>
   );
