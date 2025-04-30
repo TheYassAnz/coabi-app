@@ -173,25 +173,21 @@ export default function RegisterPage() {
             )}
           </FormControl>
 
-          <HStack space="lg">
-            <Button
-              className=" rounded-md"
-              size="md"
-              onPress={handleSubmit(onSubmit)}
-            >
+          <VStack space="sm">
+            <Button variant="solid" size="md" onPress={handleSubmit(onSubmit)}>
               <ButtonText>Sign Up</ButtonText>
             </Button>
             <Button
               className=""
               size="md"
-              variant="link"
+              variant="outline"
               onPress={() => {
                 router.replace("/login");
               }}
             >
               <ButtonText>Sign In</ButtonText>
             </Button>
-          </HStack>
+          </VStack>
         </VStack>
       </Center>
     </SafeAreaView>
