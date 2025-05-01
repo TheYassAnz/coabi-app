@@ -36,8 +36,7 @@ export abstract class APIService {
       },
       async (error) => {
         const originalRequest = error.config;
-
-        if (error.response?.status === "401") {
+        if (error.response?.status === 401) {
           try {
             const response = await this.post<any, any>(`/auth/refresh/`);
             const refresh = AccessResponseSchema.parse(response.data);

@@ -15,10 +15,10 @@ export async function getUserByAccessToken(): Promise<UserResponse | void> {
     const userService = new UserService();
     const user = await userService.getUserById(decodedToken.id);
     return user;
-  } catch (error) {
+  } catch (error: any) {
     await authService.logout();
     throw {
-      message: "Invalid accessToken",
+      message: error.message,
     };
   }
 }
