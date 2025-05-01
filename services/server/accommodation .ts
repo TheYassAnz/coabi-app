@@ -42,7 +42,7 @@ export class AccommodationService extends APIService {
     }
   }
 
-  async getAccommodationById(id: number): Promise<AccommodationResponse> {
+  async getAccommodationById(id: string): Promise<AccommodationResponse> {
     try {
       const response = await this.get<any>(`/accommodations/${id}`);
       return AccommodationResponseSchema.parse(response.data);
@@ -55,7 +55,7 @@ export class AccommodationService extends APIService {
   }
 
   async updateAccommodationById(
-    id: number,
+    id: string,
     data: AccommodationPatch,
   ): Promise<AccommodationResponse> {
     try {
@@ -72,7 +72,7 @@ export class AccommodationService extends APIService {
     }
   }
 
-  async deleteAccommodationById(id: number) {
+  async deleteAccommodationById(id: string) {
     try {
       const response = await this.delete(`/accommodations/${id}`);
       if (response.status !== 204) {
