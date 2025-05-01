@@ -38,7 +38,7 @@ export class RefundService extends APIService {
     }
   }
 
-  async getRefundById(id: number): Promise<RefundResponse> {
+  async getRefundById(id: string): Promise<RefundResponse> {
     try {
       const response = await this.get<any>(`/refunds/${id}`);
       return RefundResponseSchema.parse(response.data);
@@ -51,7 +51,7 @@ export class RefundService extends APIService {
   }
 
   async updateRefundById(
-    id: number,
+    id: string,
     data: RefundPatch,
   ): Promise<RefundResponse> {
     try {
@@ -68,7 +68,7 @@ export class RefundService extends APIService {
     }
   }
 
-  async deleteRefundById(id: number) {
+  async deleteRefundById(id: string) {
     try {
       const response = await this.delete(`/refunds/${id}`);
       if (response.status !== 204) {

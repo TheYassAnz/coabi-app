@@ -35,7 +35,7 @@ export class EventService extends APIService {
     }
   }
 
-  async getEventById(id: number): Promise<EventResponse> {
+  async getEventById(id: string): Promise<EventResponse> {
     try {
       const response = await this.get<any>(`/events/${id}`);
       return EventResponseSchema.parse(response.data);
@@ -47,7 +47,7 @@ export class EventService extends APIService {
     }
   }
 
-  async updateEventById(id: number, data: EventPatch): Promise<EventResponse> {
+  async updateEventById(id: string, data: EventPatch): Promise<EventResponse> {
     try {
       const response = await this.patch<EventPatch, any>(`/events/${id}`, data);
       return EventResponseSchema.parse(response.data);
@@ -59,7 +59,7 @@ export class EventService extends APIService {
     }
   }
 
-  async deleteEventById(id: number) {
+  async deleteEventById(id: string) {
     try {
       const response = await this.delete(`/events/${id}`);
       if (response.status !== 204) {
