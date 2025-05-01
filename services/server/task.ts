@@ -35,7 +35,7 @@ export class TaskService extends APIService {
     }
   }
 
-  async getTaskById(id: number): Promise<TaskResponse> {
+  async getTaskById(id: string): Promise<TaskResponse> {
     try {
       const response = await this.get<any>(`/tasks/${id}`);
       return TaskResponseSchema.parse(response.data);
@@ -47,7 +47,7 @@ export class TaskService extends APIService {
     }
   }
 
-  async updateTaskById(id: number, data: TaskPatch): Promise<TaskResponse> {
+  async updateTaskById(id: string, data: TaskPatch): Promise<TaskResponse> {
     try {
       const response = await this.patch<TaskPatch, any>(`/tasks/${id}`, data);
       return TaskResponseSchema.parse(response.data);
@@ -59,7 +59,7 @@ export class TaskService extends APIService {
     }
   }
 
-  async deleteTaskById(id: number) {
+  async deleteTaskById(id: string) {
     try {
       const response = await this.delete(`/tasks/${id}`);
       if (response.status !== 204) {

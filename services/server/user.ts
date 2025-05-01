@@ -22,7 +22,7 @@ export class UserService extends APIService {
     }
   }
 
-  async getUserById(id: number): Promise<UserResponse> {
+  async getUserById(id: string): Promise<UserResponse> {
     try {
       const response = await this.get<any>(`/users/${id}`);
       return UserResponseSchema.parse(response.data);
@@ -34,7 +34,7 @@ export class UserService extends APIService {
     }
   }
 
-  async updateUserById(id: number, data: UserPatch): Promise<UserResponse> {
+  async updateUserById(id: string, data: UserPatch): Promise<UserResponse> {
     try {
       const response = await this.patch<UserPatch, any>(`/users/${id}`, data);
       return UserResponseSchema.parse(response.data);
@@ -46,7 +46,7 @@ export class UserService extends APIService {
     }
   }
 
-  async deleteUserById(id: number) {
+  async deleteUserById(id: string) {
     try {
       const response = await this.delete(`/users/${id}`);
       if (response.status !== 204) {
