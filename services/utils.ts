@@ -1,8 +1,10 @@
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import { AuthService } from "./server/auth";
+import { UserService } from "./server/user";
+import { UserResponse } from "@/types/zod/user";
 
-export async function getUserById(): Promise<string | void> {
+export async function getUserByAccessToken(): Promise<UserResponse | void> {
   const authService = new AuthService();
   const accessToken = await SecureStore.getItemAsync("accessToken");
   if (!accessToken) {
@@ -10,11 +12,13 @@ export async function getUserById(): Promise<string | void> {
   }
   try {
     const decodedToken: { id: string } = jwtDecode(accessToken);
-    return decodedToken.id;
-  } catch (error) {
+    const userService = new UserService();
+    const user = await userService.getUserById(decodedToken.id);
+    return user;
+  } catch (error: any) {
     await authService.logout();
     throw {
-      message: "Invalid accessToken",
+      message: error.message,
     };
   }
 }
