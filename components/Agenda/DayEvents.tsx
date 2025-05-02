@@ -1,15 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-
-interface Event {
-  id: string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  description?: string | null;
-}
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { Event } from "../../types/event";
+import { format, parseISO } from "date-fns";
 
 interface DayEventsProps {
   date: string;
@@ -24,113 +22,88 @@ export const DayEvents: React.FC<DayEventsProps> = ({
   onAddEvent,
   onEditEvent,
 }) => {
-  const formattedDate = format(new Date(date), "EEEE d MMMM yyyy", {
-    locale: fr,
-  });
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.date}>{formattedDate}</Text>
-        <TouchableOpacity style={styles.addButton} onPress={onAddEvent}>
-          <Text style={styles.addButtonText}>+</Text>
+        <Text style={styles.dateText}>
+          {format(parseISO(date), "MMMM d, yyyy")}
+        </Text>
+        <TouchableOpacity onPress={onAddEvent} style={styles.addButton}>
+          <Text style={styles.addButtonText}>Add Event</Text>
         </TouchableOpacity>
       </View>
-
-      {events.length === 0 ? (
-        <Text style={styles.noEvents}>Aucun événement pour ce jour</Text>
-      ) : (
-        events.map((event) => (
-          <View key={event.id} style={styles.eventCard}>
-            <View style={styles.eventHeader}>
-              <Text style={styles.eventTitle}>{event.title}</Text>
-              <TouchableOpacity onPress={() => onEditEvent(event)}>
-                <Text style={styles.editButton}>Edit</Text>
-              </TouchableOpacity>
-            </View>
+      <ScrollView style={styles.eventsList}>
+        {events.map((event) => (
+          <TouchableOpacity
+            key={event.id}
+            style={styles.eventCard}
+            onPress={() => onEditEvent(event)}
+          >
+            <Text style={styles.eventTitle}>{event.title}</Text>
             <Text style={styles.eventTime}>
-              {format(new Date(event.startDate), "HH:mm")} -{" "}
-              {format(new Date(event.endDate), "HH:mm")}
+              {format(parseISO(event.startDate), "h:mm a")} -{" "}
+              {format(parseISO(event.endDate), "h:mm a")}
             </Text>
             {event.description && (
               <Text style={styles.eventDescription}>{event.description}</Text>
             )}
-          </View>
-        ))
-      )}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    padding: 15,
-    margin: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    flex: 1,
+    padding: 16,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 16,
   },
-  date: {
+  dateText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#2d4150",
   },
   addButton: {
-    backgroundColor: "#00adf5",
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#007AFF",
+    padding: 8,
+    borderRadius: 8,
   },
   addButtonText: {
-    color: "#ffffff",
-    fontSize: 24,
-    fontWeight: "bold",
+    color: "white",
+    fontWeight: "500",
   },
-  noEvents: {
-    textAlign: "center",
-    color: "#666",
-    fontStyle: "italic",
+  eventsList: {
+    flex: 1,
   },
   eventCard: {
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "white",
+    padding: 16,
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 10,
-  },
-  eventHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    marginBottom: 8,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   eventTitle: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#2d4150",
-    marginBottom: 5,
-  },
-  editButton: {
-    color: "#00adf5",
-    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 4,
   },
   eventTime: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 5,
+    marginBottom: 4,
   },
   eventDescription: {
     fontSize: 14,
