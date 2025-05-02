@@ -77,33 +77,43 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Ajouter un événement</Text>
+          <Text style={styles.modalTitle}>
+            {editEvent ? "Modifier l'événement" : "Nouvel événement"}
+          </Text>
 
           <TextInput
             style={styles.input}
             placeholder="Titre de l'événement"
             value={title}
             onChangeText={setTitle}
+            placeholderTextColor="#666"
           />
 
-          <TouchableOpacity
-            style={styles.timeButton}
-            onPress={() => setShowStartTimePicker(true)}
-          >
-            <Text>Heure de début: {format(startTime, "HH:mm")}</Text>
-          </TouchableOpacity>
+          <View style={styles.timeSection}>
+            <Text style={styles.timeSectionTitle}>Horaires</Text>
+            <TouchableOpacity
+              style={styles.timeButton}
+              onPress={() => setShowStartTimePicker(true)}
+            >
+              <Text style={styles.timeButtonText}>
+                Début: {format(startTime, "HH:mm")}
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.timeButton}
-            onPress={() => setShowEndTimePicker(true)}
-          >
-            <Text>Heure de fin: {format(endTime, "HH:mm")}</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.timeButton}
+              onPress={() => setShowEndTimePicker(true)}
+            >
+              <Text style={styles.timeButtonText}>
+                Fin: {format(endTime, "HH:mm")}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           <TextInput
             style={[styles.input, styles.descriptionInput]}
@@ -111,7 +121,30 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
             value={description}
             onChangeText={setDescription}
             multiline
+            placeholderTextColor="#666"
           />
+
+          {(showStartTimePicker || showEndTimePicker) && (
+            <View style={styles.timePickerContainer}>
+              <DateTimePicker
+                value={showStartTimePicker ? startTime : endTime}
+                mode="time"
+                is24Hour={true}
+                display="spinner"
+                onChange={(event, selectedTime) => {
+                  if (selectedTime) {
+                    if (showStartTimePicker) {
+                      setStartTime(selectedTime);
+                    } else {
+                      setEndTime(selectedTime);
+                    }
+                  }
+                  setShowStartTimePicker(false);
+                  setShowEndTimePicker(false);
+                }}
+              />
+            </View>
+          )}
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -124,29 +157,11 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
               style={[styles.button, styles.saveButton]}
               onPress={handleSave}
             >
-              <Text style={styles.buttonText}>Enregistrer</Text>
+              <Text style={[styles.buttonText, styles.saveButtonText]}>
+                Enregistrer
+              </Text>
             </TouchableOpacity>
           </View>
-
-          {(showStartTimePicker || showEndTimePicker) && (
-            <DateTimePicker
-              value={showStartTimePicker ? startTime : endTime}
-              mode="time"
-              is24Hour={true}
-              display="default"
-              onChange={(event, selectedTime) => {
-                if (selectedTime) {
-                  if (showStartTimePicker) {
-                    setStartTime(selectedTime);
-                  } else {
-                    setEndTime(selectedTime);
-                  }
-                }
-                setShowStartTimePicker(false);
-                setShowEndTimePicker(false);
-              }}
-            />
-          )}
         </View>
       </View>
     </Modal>
@@ -161,54 +176,96 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    padding: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 24,
     width: "90%",
-    maxWidth: 400,
+    maxHeight: "90%",
+    elevation: 5,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 24,
+    color: "#000000",
     textAlign: "center",
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
+    borderColor: "#E0E0E0",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    fontSize: 16,
+    backgroundColor: "#F5F5F5",
+    color: "#000000",
   },
-  descriptionInput: {
-    height: 100,
-    textAlignVertical: "top",
+  timeSection: {
+    marginBottom: 20,
+  },
+  timeSectionTitle: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#000000",
+    marginBottom: 8,
   },
   timeButton: {
+    backgroundColor: "#F5F5F5",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
+    borderColor: "#E0E0E0",
+  },
+  timeButtonText: {
+    fontSize: 16,
+    color: "#000000",
+  },
+  timePickerContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    marginBottom: 16,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 8,
   },
   button: {
-    padding: 10,
-    borderRadius: 5,
-    minWidth: 100,
+    flex: 0.48,
+    padding: 16,
+    borderRadius: 12,
     alignItems: "center",
+    justifyContent: "center",
   },
   cancelButton: {
-    backgroundColor: "#dc3545",
+    backgroundColor: "#F5F5F5",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
   },
   saveButton: {
-    backgroundColor: "#00adf5",
+    backgroundColor: "#333333",
   },
   buttonText: {
-    color: "#ffffff",
-    fontWeight: "bold",
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000000",
+  },
+  saveButtonText: {
+    color: "#FFFFFF",
+  },
+  descriptionInput: {
+    height: 100,
+    textAlignVertical: "top",
   },
 });

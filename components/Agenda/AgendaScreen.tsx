@@ -158,13 +158,48 @@ export const AgendaScreen: React.FC = () => {
     });
   };
 
-  const markedDates = events.reduce((acc, event) => {
-    const date = format(parseISO(event.startDate), "yyyy-MM-dd");
-    return {
-      ...acc,
-      [date]: { marked: true },
-    };
-  }, {});
+  const markedDates = events.reduce<
+    Record<
+      string,
+      {
+        selected?: boolean;
+        selectedColor?: string;
+        marked: boolean;
+        dots?: { color: string }[];
+      }
+    >
+  >(
+    (acc, event) => {
+      const date = format(parseISO(event.startDate), "yyyy-MM-dd");
+      acc[date] = {
+        ...(date === selectedDate
+          ? {
+              selected: true,
+              selectedColor: "#007AFF",
+            }
+          : {}),
+        marked: true,
+        dots: [{ color: date === selectedDate ? "white" : "#007AFF" }],
+      };
+      return acc;
+    },
+    {
+      [selectedDate]: {
+        selected: true,
+        selectedColor: "#007AFF",
+        marked: events.some(
+          (event) =>
+            format(parseISO(event.startDate), "yyyy-MM-dd") === selectedDate,
+        ),
+        dots: events.some(
+          (event) =>
+            format(parseISO(event.startDate), "yyyy-MM-dd") === selectedDate,
+        )
+          ? [{ color: "white" }]
+          : undefined,
+      },
+    },
+  );
 
   return (
     <View style={styles.container}>
