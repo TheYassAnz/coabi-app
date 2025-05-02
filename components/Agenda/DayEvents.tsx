@@ -14,6 +14,7 @@ interface DayEventsProps {
   events: Event[];
   onAddEvent: () => void;
   onEditEvent: (event: Event) => void;
+  onDeleteEvent: (event: Event) => void; // Add this prop
 }
 
 export const DayEvents: React.FC<DayEventsProps> = ({
@@ -21,6 +22,7 @@ export const DayEvents: React.FC<DayEventsProps> = ({
   events,
   onAddEvent,
   onEditEvent,
+  onDeleteEvent,
 }) => {
   return (
     <View style={styles.container}>
@@ -34,20 +36,32 @@ export const DayEvents: React.FC<DayEventsProps> = ({
       </View>
       <ScrollView style={styles.eventsList}>
         {events.map((event) => (
-          <TouchableOpacity
-            key={event.id}
-            style={styles.eventCard}
-            onPress={() => onEditEvent(event)}
-          >
-            <Text style={styles.eventTitle}>{event.title}</Text>
-            <Text style={styles.eventTime}>
-              {format(parseISO(event.startDate), "h:mm a")} -{" "}
-              {format(parseISO(event.endDate), "h:mm a")}
-            </Text>
-            {event.description && (
-              <Text style={styles.eventDescription}>{event.description}</Text>
-            )}
-          </TouchableOpacity>
+          <View key={event.id} style={styles.eventCard}>
+            <View>
+              <Text style={styles.eventTitle}>{event.title}</Text>
+              <Text style={styles.eventTime}>
+                {format(parseISO(event.startDate), "h:mm a")} -{" "}
+                {format(parseISO(event.endDate), "h:mm a")}
+              </Text>
+              {event.description && (
+                <Text style={styles.eventDescription}>{event.description}</Text>
+              )}
+            </View>
+            <View style={styles.eventActions}>
+              <TouchableOpacity
+                onPress={() => onEditEvent(event)}
+                style={styles.actionButton}
+              >
+                <Text style={styles.editButtonText}>Modifier</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => onDeleteEvent(event)}
+                style={[styles.actionButton, styles.deleteButton]}
+              >
+                <Text style={styles.deleteButtonText}>Supprimer</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         ))}
       </ScrollView>
     </View>
@@ -108,5 +122,24 @@ const styles = StyleSheet.create({
   eventDescription: {
     fontSize: 14,
     color: "#666",
+  },
+  eventActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 8,
+  },
+  actionButton: {
+    padding: 8,
+    marginLeft: 8,
+    borderRadius: 4,
+  },
+  deleteButton: {
+    backgroundColor: "#dc3545",
+  },
+  editButtonText: {
+    color: "#007AFF",
+  },
+  deleteButtonText: {
+    color: "white",
   },
 });

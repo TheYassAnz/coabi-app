@@ -125,6 +125,32 @@ export const AgendaScreen: React.FC = () => {
     }
   };
 
+  const handleDeleteEvent = async (event: Event) => {
+    try {
+      Alert.alert(
+        "Confirmation",
+        "Êtes-vous sûr de vouloir supprimer cet événement ?",
+        [
+          {
+            text: "Annuler",
+            style: "cancel",
+          },
+          {
+            text: "Supprimer",
+            style: "destructive",
+            onPress: async () => {
+              await eventService.deleteEventById(event.id);
+              setEvents(events.filter((e) => e.id !== event.id));
+            },
+          },
+        ],
+      );
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+      Alert.alert("Error", "Failed to delete event. Please try again.");
+    }
+  };
+
   const getEventsForSelectedDate = () => {
     return events.filter((event) => {
       const eventDate = format(parseISO(event.startDate), "yyyy-MM-dd");
@@ -148,6 +174,7 @@ export const AgendaScreen: React.FC = () => {
         events={getEventsForSelectedDate()}
         onAddEvent={handleAddEvent}
         onEditEvent={handleEditEvent}
+        onDeleteEvent={handleDeleteEvent}
       />
       <AddEventModal
         visible={isModalVisible}
