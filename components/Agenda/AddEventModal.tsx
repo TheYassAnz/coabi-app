@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { format, parseISO } from "date-fns";
+import { Event } from "../../types/event";
 
 interface AddEventModalProps {
   visible: boolean;
@@ -21,6 +22,7 @@ interface AddEventModalProps {
     description?: string;
   }) => void;
   selectedDate: string;
+  editEvent: Event | null;
 }
 
 export const AddEventModal: React.FC<AddEventModalProps> = ({
@@ -28,6 +30,7 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
   onClose,
   onSave,
   selectedDate,
+  editEvent,
 }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -35,6 +38,15 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
   const [endTime, setEndTime] = useState(new Date());
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+
+  useEffect(() => {
+    if (editEvent) {
+      setTitle(editEvent.title);
+      setDescription(editEvent.description || "");
+      setStartTime(parseISO(editEvent.startDate));
+      setEndTime(parseISO(editEvent.endDate));
+    }
+  }, [editEvent]);
 
   const handleSave = () => {
     if (!title) return;

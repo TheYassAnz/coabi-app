@@ -5,16 +5,9 @@ import { DayEvents } from "./DayEvents";
 import { AddEventModal } from "./AddEventModal";
 import { format, parseISO } from "date-fns";
 import { EventService } from "../../services/server/event";
-import { EventPost } from "../../types/zod/event";
+import { EventPost, EventPatch } from "../../types/zod/event";
 import { useAuth } from "../../contexts/AuthContext";
-
-interface Event {
-  id: string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  description?: string | null;
-}
+import { Event } from "../../types/event";
 
 export const AgendaScreen: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(
@@ -22,6 +15,7 @@ export const AgendaScreen: React.FC = () => {
   );
   const [events, setEvents] = useState<Event[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const eventService = new EventService();
   const { userId, accommodationId } = useAuth();
 
@@ -54,6 +48,11 @@ export const AgendaScreen: React.FC = () => {
     setIsModalVisible(true);
   };
 
+  const handleEditEvent = (event: Event) => {
+    setEditingEvent(event);
+    setIsModalVisible(true);
+  };
+
   const handleSaveEvent = async (newEvent: {
     title: string;
     startTime: Date;
@@ -66,35 +65,64 @@ export const AgendaScreen: React.FC = () => {
         return;
       }
 
-      // if (!accommodationId) {
-      //   Alert.alert("Error", "No accommodation selected");
-      //   return;
-      // }
+      if (editingEvent) {
+        const eventData: EventPatch = {
+          title: newEvent.title,
+          description: newEvent.description || null,
+          plannedDate: newEvent.startTime,
+          endDate: newEvent.endTime,
+        };
 
-      const eventData: EventPost = {
-        title: newEvent.title,
-        description: newEvent.description || null,
-        plannedDate: newEvent.startTime,
-        endDate: newEvent.endTime,
-        userId,
-        accommodationId: "67e922f5f031d41cd1da4fe4", // FIXME get from context
-      };
+        // Remove Number() conversion since MongoDB uses string IDs
+        const updatedEvent = await eventService.updateEventById(
+          editingEvent.id,
+          eventData,
+        );
 
-      const createdEvent = await eventService.createEvent(eventData);
+        setEvents(
+          events.map((e) =>
+            e.id === editingEvent.id
+              ? {
+                  id: updatedEvent._id,
+                  title: updatedEvent.title,
+                  startDate: format(
+                    newEvent.startTime,
+                    "yyyy-MM-dd'T'HH:mm:ss",
+                  ),
+                  endDate: format(newEvent.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
+                  description: updatedEvent.description,
+                }
+              : e,
+          ),
+        );
+      } else {
+        const eventData: EventPost = {
+          title: newEvent.title,
+          description: newEvent.description || null,
+          plannedDate: newEvent.startTime,
+          endDate: newEvent.endTime,
+          userId,
+          accommodationId: "67e922f5f031d41cd1da4fe4", // FIXME get from context
+        };
 
-      const event: Event = {
-        id: createdEvent._id,
-        title: createdEvent.title,
-        startDate: format(newEvent.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
-        endDate: format(newEvent.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
-        description: createdEvent.description,
-      };
+        const createdEvent = await eventService.createEvent(eventData);
 
-      setEvents([...events, event]);
+        const event: Event = {
+          id: createdEvent._id,
+          title: createdEvent.title,
+          startDate: format(newEvent.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
+          endDate: format(newEvent.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
+          description: createdEvent.description,
+        };
+
+        setEvents([...events, event]);
+      }
+
+      setEditingEvent(null);
       setIsModalVisible(false);
     } catch (error) {
-      console.error("Failed to create event:", error);
-      Alert.alert("Error", "Failed to create event. Please try again.");
+      console.error("Failed to save event:", error);
+      Alert.alert("Error", "Failed to save event. Please try again.");
     }
   };
 
@@ -120,12 +148,17 @@ export const AgendaScreen: React.FC = () => {
         date={selectedDate}
         events={getEventsForSelectedDate()}
         onAddEvent={handleAddEvent}
+        onEditEvent={handleEditEvent}
       />
       <AddEventModal
         visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
+        onClose={() => {
+          setIsModalVisible(false);
+          setEditingEvent(null);
+        }}
         onSave={handleSaveEvent}
         selectedDate={selectedDate}
+        editEvent={editingEvent}
       />
     </View>
   );

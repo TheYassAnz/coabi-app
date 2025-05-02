@@ -15,12 +15,14 @@ interface DayEventsProps {
   date: string;
   events: Event[];
   onAddEvent: () => void;
+  onEditEvent: (event: Event) => void;
 }
 
 export const DayEvents: React.FC<DayEventsProps> = ({
   date,
   events,
   onAddEvent,
+  onEditEvent,
 }) => {
   const formattedDate = format(new Date(date), "EEEE d MMMM yyyy", {
     locale: fr,
@@ -40,7 +42,12 @@ export const DayEvents: React.FC<DayEventsProps> = ({
       ) : (
         events.map((event) => (
           <View key={event.id} style={styles.eventCard}>
-            <Text style={styles.eventTitle}>{event.title}</Text>
+            <View style={styles.eventHeader}>
+              <Text style={styles.eventTitle}>{event.title}</Text>
+              <TouchableOpacity onPress={() => onEditEvent(event)}>
+                <Text style={styles.editButton}>Edit</Text>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.eventTime}>
               {format(new Date(event.startDate), "HH:mm")} -{" "}
               {format(new Date(event.endDate), "HH:mm")}
@@ -105,11 +112,20 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 10,
   },
+  eventHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   eventTitle: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#2d4150",
     marginBottom: 5,
+  },
+  editButton: {
+    color: "#00adf5",
+    fontSize: 14,
   },
   eventTime: {
     fontSize: 14,
