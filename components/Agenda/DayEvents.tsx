@@ -8,7 +8,7 @@ interface Event {
   title: string;
   startDate: string;
   endDate: string;
-  description?: string;
+  description?: string | null;
 }
 
 interface DayEventsProps {
