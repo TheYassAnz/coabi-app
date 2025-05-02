@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 interface AddEventModalProps {
   visible: boolean;
@@ -39,10 +39,17 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
   const handleSave = () => {
     if (!title) return;
 
+    // Créer les dates complètes en combinant la date sélectionnée avec les heures choisies
+    const startDateTime = new Date(selectedDate);
+    startDateTime.setHours(startTime.getHours(), startTime.getMinutes());
+
+    const endDateTime = new Date(selectedDate);
+    endDateTime.setHours(endTime.getHours(), endTime.getMinutes());
+
     onSave({
       title,
-      startTime,
-      endTime,
+      startTime: startDateTime,
+      endTime: endDateTime,
       description,
     });
 
