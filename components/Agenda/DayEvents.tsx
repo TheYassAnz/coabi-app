@@ -7,14 +7,14 @@ import {
   ScrollView,
 } from "react-native";
 import { Event } from "../../types/event";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isBefore, startOfDay } from "date-fns";
 
 interface DayEventsProps {
   date: string;
   events: Event[];
   onAddEvent: () => void;
   onEditEvent: (event: Event) => void;
-  onDeleteEvent: (event: Event) => void; // Add this prop
+  onDeleteEvent: (event: Event) => void;
 }
 
 export const DayEvents: React.FC<DayEventsProps> = ({
@@ -24,16 +24,28 @@ export const DayEvents: React.FC<DayEventsProps> = ({
   onEditEvent,
   onDeleteEvent,
 }) => {
+  const isPastDate = isBefore(parseISO(date), startOfDay(new Date()));
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.dateText}>
           {format(parseISO(date), "MMMM d, yyyy")}
         </Text>
-        <TouchableOpacity onPress={onAddEvent} style={styles.addButton}>
+        <TouchableOpacity
+          onPress={onAddEvent}
+          style={[styles.addButton, isPastDate && styles.disabledAddButton]}
+          disabled={isPastDate}
+        >
           <Text style={styles.addButtonText}>Add Event</Text>
+          {isPastDate && <View style={styles.pastDateIndicator} />}
         </TouchableOpacity>
       </View>
+      {isPastDate && (
+        <Text style={styles.warningText}>
+          Cannot create events for past dates
+        </Text>
+      )}
       <ScrollView style={styles.eventsList}>
         {events.map((event) => (
           <View key={event.id} style={styles.eventCard}>
@@ -148,5 +160,27 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: "#FFFFFF",
     fontWeight: "500",
+  },
+  disabledAddButton: {
+    opacity: 0.5,
+    position: "relative",
+  },
+  pastDateIndicator: {
+    position: "absolute",
+    right: -4,
+    top: -4,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#FF4444",
+    borderWidth: 1,
+    borderColor: "#FFFFFF",
+  },
+  warningText: {
+    color: "#FF4444",
+    fontSize: 12,
+    marginTop: -12,
+    marginBottom: 12,
+    textAlign: "right",
   },
 });
