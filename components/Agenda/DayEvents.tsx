@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: "#FFFFFF",
   },
   header: {
     flexDirection: "row",
@@ -81,26 +82,29 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "600",
+    color: "#000000",
   },
   addButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#333333",
     padding: 8,
     borderRadius: 8,
   },
   addButtonText: {
-    color: "white",
+    color: "#FFFFFF",
     fontWeight: "500",
   },
   eventsList: {
     flex: 1,
   },
   eventCard: {
-    backgroundColor: "white",
+    backgroundColor: "#F5F5F5",
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 8,
-    shadowColor: "#000",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    shadowColor: "#000000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -112,16 +116,17 @@ const styles = StyleSheet.create({
   eventTitle: {
     fontSize: 16,
     fontWeight: "600",
+    color: "#000000",
     marginBottom: 4,
   },
   eventTime: {
     fontSize: 14,
-    color: "#666",
+    color: "#666666",
     marginBottom: 4,
   },
   eventDescription: {
     fontSize: 14,
-    color: "#666",
+    color: "#666666",
   },
   eventActions: {
     flexDirection: "row",
@@ -131,15 +136,17 @@ const styles = StyleSheet.create({
   actionButton: {
     padding: 8,
     marginLeft: 8,
-    borderRadius: 4,
+    borderRadius: 8,
   },
   deleteButton: {
-    backgroundColor: "#dc3545",
+    backgroundColor: "#333333",
   },
   editButtonText: {
-    color: "#007AFF",
+    color: "#333333",
+    fontWeight: "500",
   },
   deleteButtonText: {
-    color: "white",
+    color: "#FFFFFF",
+    fontWeight: "500",
   },
 });
