@@ -73,7 +73,6 @@ export const AgendaScreen: React.FC = () => {
           endDate: newEvent.endTime,
         };
 
-        // Remove Number() conversion since MongoDB uses string IDs
         const updatedEvent = await eventService.updateEventById(
           editingEvent.id,
           eventData,
