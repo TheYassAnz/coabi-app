@@ -1,8 +1,17 @@
 import { Tabs } from "expo-router";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useEffect, useState } from "react";
+import { UserService } from "@/services/server/user";
+import { getUserById } from "@/services/utils";
 
 export default function TabLayout() {
+  const userService = new UserService();
+  const [isJoinedAccommodation, setIsJoinedAccommodation] = useState(false);
+  useEffect(() => {
+    // TO DO
+  }, []);
+
   return (
     <Tabs
       screenOptions={{
