@@ -1,6 +1,6 @@
+import { getUserById } from "../services/utils";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
-import { getUserById } from "../services/utils";
 
 interface AuthContextType {
   userId: string | null;
