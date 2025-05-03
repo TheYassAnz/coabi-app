@@ -27,6 +27,15 @@ export const EventResponseSchema = EventPostSchema.extend({
 
 export const EventPatchSchema = BaseEventSchema.partial();
 
+export interface Event {
+  id: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  description?: string | null;
+  status?: "pending" | "completed" | "cancelled";
+}
+
 export interface EventPost {
   title: string;
   description: string | null;

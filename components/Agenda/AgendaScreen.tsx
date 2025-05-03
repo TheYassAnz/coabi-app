@@ -7,7 +7,7 @@ import { format, parseISO } from "date-fns";
 import { EventService } from "../../services/server/event";
 import { EventPost, EventPatch } from "../../types/zod/event";
 import { useAuth } from "../../contexts/AuthContext";
-import { Event } from "../../types/event";
+import { Event } from "../../types/zod/event";
 
 export const AgendaScreen: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(

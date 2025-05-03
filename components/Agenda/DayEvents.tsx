@@ -6,7 +6,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { Event } from "../../types/event";
+import { Event } from "../../types/zod/event";
 import { format, parseISO, isBefore, startOfDay } from "date-fns";
 import { fr } from "date-fns/locale"; // Ajouter cet import
 

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { format, parseISO } from "date-fns";
-import { Event } from "../../types/event";
+import { Event } from "../../types/zod/event";
 
 interface AddEventModalProps {
   visible: boolean;
