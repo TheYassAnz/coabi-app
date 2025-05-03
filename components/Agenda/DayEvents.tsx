@@ -26,6 +26,19 @@ export const DayEvents: React.FC<DayEventsProps> = ({
 }) => {
   const isPastDate = isBefore(parseISO(date), startOfDay(new Date()));
 
+  const getPriorityColor = (priority?: "high" | "medium" | "low") => {
+    switch (priority) {
+      case "high":
+        return "#FF4444";
+      case "medium":
+        return "#FFB020";
+      case "low":
+        return "#33CC33";
+      default:
+        return "#E0E0E0";
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -48,16 +61,37 @@ export const DayEvents: React.FC<DayEventsProps> = ({
       )}
       <ScrollView style={styles.eventsList}>
         {events.map((event) => (
-          <View key={event.id} style={styles.eventCard}>
-            <View>
-              <Text style={styles.eventTitle}>{event.title}</Text>
-              <Text style={styles.eventTime}>
-                {format(parseISO(event.startDate), "h:mm a")} -{" "}
-                {format(parseISO(event.endDate), "h:mm a")}
-              </Text>
-              {event.description && (
-                <Text style={styles.eventDescription}>{event.description}</Text>
-              )}
+          <View
+            key={event.id}
+            style={[
+              styles.eventCard,
+              event.status && styles[`${event.status}Event`],
+            ]}
+          >
+            <View style={styles.eventHeader}>
+              <View
+                style={[
+                  styles.priorityIndicator,
+                  { backgroundColor: getPriorityColor(event.priority) },
+                ]}
+              />
+              <View style={styles.eventContent}>
+                <Text style={styles.eventTitle}>{event.title}</Text>
+                <Text style={styles.eventTime}>
+                  {format(parseISO(event.startDate), "HH:mm")} -{" "}
+                  {format(parseISO(event.endDate), "HH:mm")}
+                </Text>
+                {event.description && (
+                  <Text style={styles.eventDescription}>
+                    {event.description}
+                  </Text>
+                )}
+                {event.status && (
+                  <View style={styles.statusContainer}>
+                    <Text style={styles.statusText}>{event.status}</Text>
+                  </View>
+                )}
+              </View>
             </View>
             <View style={styles.eventActions}>
               <TouchableOpacity
@@ -124,6 +158,41 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+  },
+  eventHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  priorityIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 12,
+    marginTop: 6,
+  },
+  eventContent: {
+    flex: 1,
+  },
+  pendingEvent: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#FFB020",
+  },
+  completedEvent: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#33CC33",
+  },
+  cancelledEvent: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#FF4444",
+  },
+  statusContainer: {
+    marginTop: 8,
+    alignSelf: "flex-start",
+  },
+  statusText: {
+    fontSize: 12,
+    color: "#666666",
+    textTransform: "capitalize",
   },
   eventTitle: {
     fontSize: 16,

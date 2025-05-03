@@ -26,13 +26,28 @@ export const AgendaScreen: React.FC = () => {
   const loadEvents = async () => {
     try {
       const fetchedEvents = await eventService.getAllEvents();
-      const formattedEvents: Event[] = fetchedEvents.map((event) => ({
-        id: event._id,
-        title: event.title,
-        startDate: format(event.plannedDate, "yyyy-MM-dd'T'HH:mm:ss"),
-        endDate: format(event.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
-        description: event.description,
-      }));
+      const formattedEvents: Event[] = fetchedEvents.map((event) => {
+        let priority: "high" | "medium" | "low" | undefined = undefined;
+        if ("priority" in event) {
+          const eventPriority = event.priority;
+          if (
+            eventPriority === "high" ||
+            eventPriority === "medium" ||
+            eventPriority === "low"
+          ) {
+            priority = eventPriority;
+          }
+        }
+
+        return {
+          id: event._id,
+          title: event.title,
+          startDate: format(event.plannedDate, "yyyy-MM-dd'T'HH:mm:ss"),
+          endDate: format(event.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
+          description: event.description,
+          priority,
+        };
+      });
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Failed to load events:", error);
@@ -58,6 +73,7 @@ export const AgendaScreen: React.FC = () => {
     startTime: Date;
     endTime: Date;
     description?: string;
+    priority?: string;
   }) => {
     try {
       if (!userId) {
@@ -90,6 +106,11 @@ export const AgendaScreen: React.FC = () => {
                   ),
                   endDate: format(newEvent.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
                   description: updatedEvent.description,
+                  priority: newEvent.priority as
+                    | "high"
+                    | "medium"
+                    | "low"
+                    | undefined, // Use the priority from newEvent
                 }
               : e,
           ),
@@ -101,7 +122,8 @@ export const AgendaScreen: React.FC = () => {
           plannedDate: newEvent.startTime,
           endDate: newEvent.endTime,
           userId,
-          accommodationId: "67e922f5f031d41cd1da4fe4", // FIXME get from context
+          accommodationId: "67e922f5f031d41cd1da4fe4",
+          priority: newEvent.priority as "high" | "medium" | "low" | undefined, // Add this
         };
 
         const createdEvent = await eventService.createEvent(eventData);
@@ -112,6 +134,7 @@ export const AgendaScreen: React.FC = () => {
           startDate: format(newEvent.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
           endDate: format(newEvent.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
           description: createdEvent.description,
+          priority: newEvent.priority as "high" | "medium" | "low" | undefined,
         };
 
         setEvents([...events, event]);

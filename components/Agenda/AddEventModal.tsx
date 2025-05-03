@@ -20,6 +20,7 @@ interface AddEventModalProps {
     startTime: Date;
     endTime: Date;
     description?: string;
+    priority?: "high" | "medium" | "low"; // Add this
   }) => void;
   selectedDate: string;
   editEvent: Event | null;
@@ -38,6 +39,9 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
   const [endTime, setEndTime] = useState(new Date());
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+  const [priority, setPriority] = useState<
+    "high" | "medium" | "low" | undefined
+  >(editEvent?.priority);
 
   useEffect(() => {
     if (editEvent) {
@@ -63,6 +67,7 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
       startTime: startDateTime,
       endTime: endDateTime,
       description,
+      priority,
     });
 
     // Reset form
@@ -70,6 +75,7 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
     setDescription("");
     setStartTime(new Date());
     setEndTime(new Date());
+    setPriority(undefined);
     onClose();
   };
 
@@ -113,6 +119,71 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
                 Fin: {format(endTime, "HH:mm")}
               </Text>
             </TouchableOpacity>
+          </View>
+
+          <View style={styles.prioritySection}>
+            <Text style={styles.prioritySectionTitle}>Priority</Text>
+            <View style={styles.priorityButtons}>
+              <TouchableOpacity
+                style={[
+                  styles.priorityButton,
+                  priority === "high" && styles.priorityButtonSelected,
+                  {
+                    backgroundColor:
+                      priority === "high" ? "#FF4444" : "#F5F5F5",
+                  },
+                ]}
+                onPress={() => setPriority("high")}
+              >
+                <Text
+                  style={[
+                    styles.priorityButtonText,
+                    priority === "high" && styles.priorityButtonTextSelected,
+                  ]}
+                >
+                  High
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.priorityButton,
+                  priority === "medium" && styles.priorityButtonSelected,
+                  {
+                    backgroundColor:
+                      priority === "medium" ? "#FFB020" : "#F5F5F5",
+                  },
+                ]}
+                onPress={() => setPriority("medium")}
+              >
+                <Text
+                  style={[
+                    styles.priorityButtonText,
+                    priority === "medium" && styles.priorityButtonTextSelected,
+                  ]}
+                >
+                  Medium
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.priorityButton,
+                  priority === "low" && styles.priorityButtonSelected,
+                  {
+                    backgroundColor: priority === "low" ? "#33CC33" : "#F5F5F5",
+                  },
+                ]}
+                onPress={() => setPriority("low")}
+              >
+                <Text
+                  style={[
+                    styles.priorityButtonText,
+                    priority === "low" && styles.priorityButtonTextSelected,
+                  ]}
+                >
+                  Low
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <TextInput
@@ -267,5 +338,37 @@ const styles = StyleSheet.create({
   descriptionInput: {
     height: 100,
     textAlignVertical: "top",
+  },
+  prioritySection: {
+    marginBottom: 20,
+  },
+  prioritySectionTitle: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#000000",
+    marginBottom: 8,
+  },
+  priorityButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  priorityButton: {
+    flex: 0.3,
+    padding: 8,
+    borderRadius: 8,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+  },
+  priorityButtonSelected: {
+    borderWidth: 0,
+  },
+  priorityButtonText: {
+    fontSize: 14,
+    color: "#000000",
+  },
+  priorityButtonTextSelected: {
+    color: "#FFFFFF",
+    fontWeight: "500",
   },
 });

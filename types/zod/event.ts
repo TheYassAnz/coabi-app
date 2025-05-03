@@ -27,6 +27,22 @@ export const EventResponseSchema = EventPostSchema.extend({
 
 export const EventPatchSchema = BaseEventSchema.partial();
 
-export type EventPost = z.infer<typeof EventPostSchema>;
+export interface EventPost {
+  title: string;
+  description: string | null;
+  plannedDate: Date;
+  endDate: Date;
+  userId: string;
+  accommodationId: string;
+  priority?: "high" | "medium" | "low"; // Add this
+}
+
+export interface EventPatch {
+  title?: string;
+  description?: string | null;
+  plannedDate?: Date;
+  endDate?: Date;
+  priority?: "high" | "medium" | "low"; // Add this
+}
+
 export type EventResponse = z.infer<typeof EventResponseSchema>;
-export type EventPatch = z.infer<typeof EventPatchSchema>;
