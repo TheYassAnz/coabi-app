@@ -87,6 +87,7 @@ export const AgendaScreen: React.FC = () => {
           description: newEvent.description || null,
           plannedDate: newEvent.startTime,
           endDate: newEvent.endTime,
+          priority: newEvent.priority as "high" | "medium" | "low" | undefined, // Cast to allowed priority types
         };
 
         const updatedEvent = await eventService.updateEventById(
@@ -123,7 +124,7 @@ export const AgendaScreen: React.FC = () => {
           endDate: newEvent.endTime,
           userId,
           accommodationId: "67e922f5f031d41cd1da4fe4",
-          priority: newEvent.priority as "high" | "medium" | "low" | undefined, // Add this
+          priority: newEvent.priority as "high" | "medium" | "low" | undefined, // Cast to allowed priority types
         };
 
         const createdEvent = await eventService.createEvent(eventData);
