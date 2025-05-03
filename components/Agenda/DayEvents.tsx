@@ -37,18 +37,20 @@ export const DayEvents: React.FC<DayEventsProps> = ({
           style={[styles.addButton, isPastDate && styles.disabledAddButton]}
           disabled={isPastDate}
         >
-          <Text style={styles.addButtonText}>Add Event</Text>
+          <Text style={styles.addButtonText}>Ajouter un événement</Text>
           {isPastDate && <View style={styles.pastDateIndicator} />}
         </TouchableOpacity>
       </View>
       {isPastDate && (
         <Text style={styles.warningText}>
-          Cannot create events for past dates
+          Impossible de créer des événements pour les dates passées
         </Text>
       )}
       <ScrollView style={styles.eventsList}>
         {events.length === 0 ? (
-          <Text style={styles.noEventsText}>No events found for this date</Text>
+          <Text style={styles.noEventsText}>
+            Aucun événement trouvé pour cette date
+          </Text>
         ) : (
           events.map((event) => (
             <View

@@ -52,7 +52,10 @@ export const AgendaScreen: React.FC = () => {
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Failed to load events:", error);
-      Alert.alert("Error", "Failed to load events. Please try again.");
+      Alert.alert(
+        "Erreur",
+        "Échec du chargement des événements. Veuillez réessayer.",
+      );
     }
   };
 
@@ -77,7 +80,10 @@ export const AgendaScreen: React.FC = () => {
   }) => {
     try {
       if (!userId) {
-        Alert.alert("Error", "You must be logged in to create an event");
+        Alert.alert(
+          "Error",
+          "Vous devez être connecté pour créer un événement",
+        );
         return;
       }
 
@@ -137,7 +143,7 @@ export const AgendaScreen: React.FC = () => {
       setIsModalVisible(false);
     } catch (error) {
       console.error("Failed to save event:", error);
-      Alert.alert("Error", "Failed to save event. Please try again.");
+      Alert.alert("Erreur", "Échec de la sauvegarde. Veuillez réessayer.");
     }
   };
 
@@ -163,7 +169,7 @@ export const AgendaScreen: React.FC = () => {
       );
     } catch (error) {
       console.error("Failed to delete event:", error);
-      Alert.alert("Error", "Failed to delete event. Please try again.");
+      Alert.alert("Erreur", "Échec de la suppression. Veuillez réessayer.");
     }
   };
 
@@ -226,7 +232,7 @@ export const AgendaScreen: React.FC = () => {
     <View style={styles.container}>
       <TextInput
         style={styles.searchInput}
-        placeholder="Search events..."
+        placeholder="Rechercher des événements..."
         value={searchQuery}
         onChangeText={setSearchQuery}
         placeholderTextColor="#666"

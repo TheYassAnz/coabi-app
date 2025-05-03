@@ -99,7 +99,7 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
               onPress={() => setShowStartTimePicker(true)}
             >
               <Text style={styles.timeButtonText}>
-                Début: {format(startTime, "HH:mm")}
+                Début : {format(startTime, "HH:mm")}
               </Text>
             </TouchableOpacity>
 
@@ -108,7 +108,7 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
               onPress={() => setShowEndTimePicker(true)}
             >
               <Text style={styles.timeButtonText}>
-                Fin: {format(endTime, "HH:mm")}
+                Fin : {format(endTime, "HH:mm")}
               </Text>
             </TouchableOpacity>
           </View>
