@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, TextInput } from "react-native";
 import { Calendar } from "./Calendar";
 import { DayEvents } from "./DayEvents";
 import { AddEventModal } from "./AddEventModal";
@@ -16,6 +16,7 @@ export const AgendaScreen: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const eventService = new EventService();
   const { userId, accommodationId } = useAuth();
 
@@ -73,7 +74,6 @@ export const AgendaScreen: React.FC = () => {
     startTime: Date;
     endTime: Date;
     description?: string;
-    priority?: string;
   }) => {
     try {
       if (!userId) {
@@ -87,7 +87,6 @@ export const AgendaScreen: React.FC = () => {
           description: newEvent.description || null,
           plannedDate: newEvent.startTime,
           endDate: newEvent.endTime,
-          priority: newEvent.priority as "high" | "medium" | "low" | undefined, // Cast to allowed priority types
         };
 
         const updatedEvent = await eventService.updateEventById(
@@ -107,11 +106,6 @@ export const AgendaScreen: React.FC = () => {
                   ),
                   endDate: format(newEvent.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
                   description: updatedEvent.description,
-                  priority: newEvent.priority as
-                    | "high"
-                    | "medium"
-                    | "low"
-                    | undefined, // Use the priority from newEvent
                 }
               : e,
           ),
@@ -124,7 +118,6 @@ export const AgendaScreen: React.FC = () => {
           endDate: newEvent.endTime,
           userId,
           accommodationId: "67e922f5f031d41cd1da4fe4",
-          priority: newEvent.priority as "high" | "medium" | "low" | undefined, // Cast to allowed priority types
         };
 
         const createdEvent = await eventService.createEvent(eventData);
@@ -135,7 +128,6 @@ export const AgendaScreen: React.FC = () => {
           startDate: format(newEvent.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
           endDate: format(newEvent.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
           description: createdEvent.description,
-          priority: newEvent.priority as "high" | "medium" | "low" | undefined,
         };
 
         setEvents([...events, event]);
@@ -178,7 +170,12 @@ export const AgendaScreen: React.FC = () => {
   const getEventsForSelectedDate = () => {
     return events.filter((event) => {
       const eventDate = format(parseISO(event.startDate), "yyyy-MM-dd");
-      return eventDate === selectedDate;
+      const matchesDate = eventDate === selectedDate;
+      const matchesSearch = searchQuery
+        ? event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.description?.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      return matchesDate && matchesSearch;
     });
   };
 
@@ -227,6 +224,13 @@ export const AgendaScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search events..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholderTextColor="#666"
+      />
       <Calendar onDayPress={handleDayPress} markedDates={markedDates} />
       <DayEvents
         date={selectedDate}
@@ -253,5 +257,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
+  },
+  searchInput: {
+    backgroundColor: "#FFFFFF",
+    padding: 12,
+    borderRadius: 8,
+    margin: 10,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    fontSize: 16,
+    color: "#000000",
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });

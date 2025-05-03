@@ -34,7 +34,6 @@ export interface EventPost {
   endDate: Date;
   userId: string;
   accommodationId: string;
-  priority?: "high" | "medium" | "low"; // Add this
 }
 
 export interface EventPatch {
@@ -42,7 +41,6 @@ export interface EventPatch {
   description?: string | null;
   plannedDate?: Date;
   endDate?: Date;
-  priority?: "high" | "medium" | "low"; // Add this
 }
 
 export type EventResponse = z.infer<typeof EventResponseSchema>;

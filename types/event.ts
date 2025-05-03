@@ -4,6 +4,5 @@ export interface Event {
   startDate: string;
   endDate: string;
   description?: string | null;
-  priority?: "high" | "medium" | "low";
   status?: "pending" | "completed" | "cancelled";
 }

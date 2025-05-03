@@ -26,19 +26,6 @@ export const DayEvents: React.FC<DayEventsProps> = ({
 }) => {
   const isPastDate = isBefore(parseISO(date), startOfDay(new Date()));
 
-  const getPriorityColor = (priority?: "high" | "medium" | "low") => {
-    switch (priority) {
-      case "high":
-        return "#FF4444";
-      case "medium":
-        return "#FFB020";
-      case "low":
-        return "#33CC33";
-      default:
-        return "#E0E0E0";
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -60,55 +47,53 @@ export const DayEvents: React.FC<DayEventsProps> = ({
         </Text>
       )}
       <ScrollView style={styles.eventsList}>
-        {events.map((event) => (
-          <View
-            key={event.id}
-            style={[
-              styles.eventCard,
-              event.status && styles[`${event.status}Event`],
-            ]}
-          >
-            <View style={styles.eventHeader}>
-              <View
-                style={[
-                  styles.priorityIndicator,
-                  { backgroundColor: getPriorityColor(event.priority) },
-                ]}
-              />
-              <View style={styles.eventContent}>
-                <Text style={styles.eventTitle}>{event.title}</Text>
-                <Text style={styles.eventTime}>
-                  {format(parseISO(event.startDate), "HH:mm")} -{" "}
-                  {format(parseISO(event.endDate), "HH:mm")}
-                </Text>
-                {event.description && (
-                  <Text style={styles.eventDescription}>
-                    {event.description}
+        {events.length === 0 ? (
+          <Text style={styles.noEventsText}>No events found for this date</Text>
+        ) : (
+          events.map((event) => (
+            <View
+              key={event.id}
+              style={[
+                styles.eventCard,
+                event.status && styles[`${event.status}Event`],
+              ]}
+            >
+              <View style={styles.eventHeader}>
+                <View style={styles.eventContent}>
+                  <Text style={styles.eventTitle}>{event.title}</Text>
+                  <Text style={styles.eventTime}>
+                    {format(parseISO(event.startDate), "HH:mm")} -{" "}
+                    {format(parseISO(event.endDate), "HH:mm")}
                   </Text>
-                )}
-                {event.status && (
-                  <View style={styles.statusContainer}>
-                    <Text style={styles.statusText}>{event.status}</Text>
-                  </View>
-                )}
+                  {event.description && (
+                    <Text style={styles.eventDescription}>
+                      {event.description}
+                    </Text>
+                  )}
+                  {event.status && (
+                    <View style={styles.statusContainer}>
+                      <Text style={styles.statusText}>{event.status}</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+              <View style={styles.eventActions}>
+                <TouchableOpacity
+                  onPress={() => onEditEvent(event)}
+                  style={styles.actionButton}
+                >
+                  <Text style={styles.editButtonText}>Modifier</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => onDeleteEvent(event)}
+                  style={[styles.actionButton, styles.deleteButton]}
+                >
+                  <Text style={styles.deleteButtonText}>Supprimer</Text>
+                </TouchableOpacity>
               </View>
             </View>
-            <View style={styles.eventActions}>
-              <TouchableOpacity
-                onPress={() => onEditEvent(event)}
-                style={styles.actionButton}
-              >
-                <Text style={styles.editButtonText}>Modifier</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => onDeleteEvent(event)}
-                style={[styles.actionButton, styles.deleteButton]}
-              >
-                <Text style={styles.deleteButtonText}>Supprimer</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
+          ))
+        )}
       </ScrollView>
     </View>
   );
@@ -162,13 +147,6 @@ const styles = StyleSheet.create({
   eventHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
-  },
-  priorityIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 12,
-    marginTop: 6,
   },
   eventContent: {
     flex: 1,
@@ -251,5 +229,11 @@ const styles = StyleSheet.create({
     marginTop: -12,
     marginBottom: 12,
     textAlign: "right",
+  },
+  noEventsText: {
+    textAlign: "center",
+    color: "#666666",
+    fontSize: 16,
+    marginTop: 20,
   },
 });
