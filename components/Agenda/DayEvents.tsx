@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Event } from "../../types/event";
 import { format, parseISO, isBefore, startOfDay } from "date-fns";
+import { fr } from "date-fns/locale"; // Ajouter cet import
 
 interface DayEventsProps {
   date: string;
@@ -30,7 +31,7 @@ export const DayEvents: React.FC<DayEventsProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.dateText}>
-          {format(parseISO(date), "MMMM d, yyyy")}
+          {format(parseISO(date), "d MMMM yyyy", { locale: fr })}
         </Text>
         <TouchableOpacity
           onPress={onAddEvent}
