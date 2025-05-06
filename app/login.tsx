@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/form-control";
 import { Input, InputField } from "@/components/ui/input";
 import { Center } from "@/components/ui/center";
-import { View } from "react-native";
 import { router } from "expo-router";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
@@ -62,6 +61,7 @@ export default function LoginScreen() {
           </FormControlLabel>
           <Input className="my-1" size="xl">
             <InputField
+              placeholder="Enter your username"
               autoCapitalize="none"
               type="text"
               value={watch("username")}
@@ -84,6 +84,7 @@ export default function LoginScreen() {
           </FormControlLabel>
           <Input className="my-1" size="xl">
             <InputField
+              placeholder="Enter your password"
               type="password"
               value={watch("password")}
               onChangeText={(text) => setValue("password", text)}

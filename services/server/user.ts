@@ -1,9 +1,11 @@
 import {
   UserResponse,
   UserPatch,
+  UserPatchPassword,
   UserResponseSchema,
 } from "../../types/zod/user";
 import { APIService } from "./api";
+import { AuthService } from "./auth";
 
 export class UserService extends APIService {
   constructor() {
@@ -46,8 +48,28 @@ export class UserService extends APIService {
     }
   }
 
+  async updateUserPasswordById(
+    id: string,
+    data: UserPatchPassword,
+  ): Promise<UserResponse> {
+    try {
+      const response = await this.patch<UserPatchPassword, any>(
+        `/users/password/${id}`,
+        data,
+      );
+      return UserResponseSchema.parse(response.data);
+    } catch (error: any) {
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
+    }
+  }
+
   async deleteUserById(id: string) {
     try {
+      const authService = new AuthService();
+      await authService.logout();
       const response = await this.delete(`/users/${id}`);
       if (response.status !== 204) {
         throw new Error("Failed to delete user.");
