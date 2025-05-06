@@ -27,28 +27,13 @@ export const AgendaScreen: React.FC = () => {
   const loadEvents = async () => {
     try {
       const fetchedEvents = await eventService.getAllEvents();
-      const formattedEvents: Event[] = fetchedEvents.map((event) => {
-        let priority: "high" | "medium" | "low" | undefined = undefined;
-        if ("priority" in event) {
-          const eventPriority = event.priority;
-          if (
-            eventPriority === "high" ||
-            eventPriority === "medium" ||
-            eventPriority === "low"
-          ) {
-            priority = eventPriority;
-          }
-        }
-
-        return {
-          id: event._id,
-          title: event.title,
-          startDate: format(event.plannedDate, "yyyy-MM-dd'T'HH:mm:ss"),
-          endDate: format(event.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
-          description: event.description,
-          priority,
-        };
-      });
+      const formattedEvents: Event[] = fetchedEvents.map((event) => ({
+        id: event._id,
+        title: event.title,
+        startDate: format(event.plannedDate, "yyyy-MM-dd'T'HH:mm:ss"),
+        endDate: format(event.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
+        description: event.description,
+      }));
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Failed to load events:", error);
