@@ -42,7 +42,7 @@ export interface EventPost {
   plannedDate: Date;
   endDate: Date;
   userId: string;
-  accommodationId: string;
+  accommodationId: string | null;
 }
 
 export interface EventPatch {

@@ -35,7 +35,7 @@ export const AgendaScreen: React.FC = () => {
         description: event.description,
       }));
       setEvents(formattedEvents);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to load events:", error);
       Alert.alert(
         "Erreur",
@@ -64,10 +64,10 @@ export const AgendaScreen: React.FC = () => {
     description?: string;
   }) => {
     try {
-      if (!userId) {
+      if (!userId || !accommodationId) {
         Alert.alert(
           "Error",
-          "Vous devez être connecté pour créer un événement",
+          "Vous devez être connecté et avoir un logement sélectionné pour créer un événement",
         );
         return;
       }
@@ -108,7 +108,7 @@ export const AgendaScreen: React.FC = () => {
           plannedDate: newEvent.startTime,
           endDate: newEvent.endTime,
           userId,
-          accommodationId: "67e922f5f031d41cd1da4fe4",
+          accommodationId,
         };
 
         const createdEvent = await eventService.createEvent(eventData);
@@ -126,9 +126,20 @@ export const AgendaScreen: React.FC = () => {
 
       setEditingEvent(null);
       setIsModalVisible(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to save event:", error);
-      Alert.alert("Erreur", "Échec de la sauvegarde. Veuillez réessayer.");
+      if (error.response) {
+        console.error("Error response:", {
+          status: error.response.status,
+          data: error.response.data,
+        });
+        Alert.alert(
+          "Erreur",
+          `Échec de la sauvegarde: ${error.response.data.message || "Veuillez vérifier les données saisies"}`,
+        );
+      } else {
+        Alert.alert("Erreur", "Échec de la sauvegarde. Veuillez réessayer.");
+      }
     }
   };
 
@@ -152,7 +163,7 @@ export const AgendaScreen: React.FC = () => {
           },
         ],
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to delete event:", error);
       Alert.alert("Erreur", "Échec de la suppression. Veuillez réessayer.");
     }
