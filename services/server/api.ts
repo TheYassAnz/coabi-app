@@ -36,19 +36,24 @@ export abstract class APIService {
       },
       async (error) => {
         const originalRequest = error.config;
-        if (error.response?.status === 401) {
+        if (
+          error.response?.status === 401 &&
+          error.response?.data.message.includes("token") &&
+          !originalRequest._retry
+        ) {
           try {
             const response = await this.post<any, any>(`/auth/refresh/`);
             const refresh = AccessResponseSchema.parse(response.data);
             await SecureStore.setItemAsync("accessToken", refresh.accessToken);
             originalRequest.headers.Authorization = `Bearer ${refresh.accessToken}`;
+            originalRequest._retry = true;
+            return this.axiosInstance.request(originalRequest);
           } catch (refreshError) {
             await this.post<any, any>(`/auth/logout/`);
             await SecureStore.deleteItemAsync("accessToken");
             router.replace("/login");
             return Promise.reject(refreshError);
           }
-          return this.axiosInstance.request(originalRequest);
         }
 
         return Promise.reject(error);
