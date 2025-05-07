@@ -31,6 +31,10 @@ export default function ProtectedLayout() {
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="accommodation/join"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }
