@@ -70,6 +70,7 @@ export default function RegisterPage() {
             <HStack space="md" className="w-full items-center">
               <Input className="my-1 flex-1" size="xl">
                 <InputField
+                  placeholder="Enter your username"
                   autoCapitalize="none"
                   type="text"
                   value={watch("username")}
@@ -94,6 +95,7 @@ export default function RegisterPage() {
             </FormControlLabel>
             <Input className="my-1" size="xl">
               <InputField
+                placeholder="Enter your email"
                 autoCapitalize="none"
                 type="text"
                 value={watch("email")}
@@ -117,6 +119,7 @@ export default function RegisterPage() {
             </FormControlLabel>
             <Input className="my-1" size="xl">
               <InputField
+                placeholder="Enter your password"
                 autoCapitalize="none"
                 type={showPassword ? "text" : "password"}
                 value={watch("password")}
@@ -149,6 +152,7 @@ export default function RegisterPage() {
             </FormControlLabel>
             <Input className="my-1" size="xl">
               <InputField
+                placeholder="Confirm your password"
                 autoCapitalize="none"
                 type={showPassword ? "text" : "password"}
                 value={watch("confirmPassword")}
