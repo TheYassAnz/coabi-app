@@ -36,7 +36,7 @@ export const AgendaScreen: React.FC = () => {
         startDate: format(event.plannedDate, "yyyy-MM-dd'T'HH:mm:ss"),
         endDate: format(event.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
         description: event.description,
-        userId: event.userId, // Add this
+        userId: event.userId,
       }));
       setEvents(formattedEvents);
     } catch (error: any) {
