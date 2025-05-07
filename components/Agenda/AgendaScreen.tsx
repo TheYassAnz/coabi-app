@@ -29,7 +29,7 @@ export const AgendaScreen: React.FC = () => {
 
   const loadEvents = async () => {
     try {
-      console.log("loadEvents - accommodationId:", accommodationId);
+      // console.log("loadEvents - accommodationId:", accommodationId);
       const fetchedEvents = await eventService.getAllEvents();
       const formattedEvents: Event[] = fetchedEvents.map((event) => ({
         id: event._id,

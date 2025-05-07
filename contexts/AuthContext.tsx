@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const loadUserData = async () => {
       try {
         const id = await getUserById();
-        console.log("AuthContext - loaded userId:", id);
+        // console.log("AuthContext - loaded userId:", id);
         if (id) {
           setUserId(id);
         }
