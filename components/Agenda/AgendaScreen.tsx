@@ -20,12 +20,16 @@ export const AgendaScreen: React.FC = () => {
   const eventService = new EventService();
   const { userId, accommodationId } = useAuth();
 
+  // console.log('Auth values:', { userId, accommodationId });
+
   useEffect(() => {
+    // console.log('useEffect - accommodationId:', accommodationId);
     loadEvents();
   }, []);
 
   const loadEvents = async () => {
     try {
+      console.log("loadEvents - accommodationId:", accommodationId);
       const fetchedEvents = await eventService.getAllEvents();
       const formattedEvents: Event[] = fetchedEvents.map((event) => ({
         id: event._id,
@@ -63,8 +67,11 @@ export const AgendaScreen: React.FC = () => {
     endTime: Date;
     description?: string;
   }) => {
+    // console.log('handleSaveEvent - auth values:', { userId, accommodationId });
+
     try {
       if (!userId || !accommodationId) {
+        // console.log('Missing auth values:', { userId, accommodationId });
         Alert.alert(
           "Error",
           "Vous devez être connecté et avoir un logement sélectionné pour créer un événement",
@@ -164,7 +171,7 @@ export const AgendaScreen: React.FC = () => {
         ],
       );
     } catch (error: any) {
-      console.error("Failed to delete event:", error);
+      // console.error("Failed to delete event:", error);
       Alert.alert("Erreur", "Échec de la suppression. Veuillez réessayer.");
     }
   };

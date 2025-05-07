@@ -1,6 +1,5 @@
-import { getUserById } from "../services/utils";
+import { getUserByAccessToken, getUserById } from "../services/utils";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import * as SecureStore from "expo-secure-store";
 
 interface AuthContextType {
   userId: string | null;
@@ -19,13 +18,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const loadUserData = async () => {
       try {
         const id = await getUserById();
+        console.log("AuthContext - loaded userId:", id);
         if (id) {
           setUserId(id);
         }
 
-        const accId = await SecureStore.getItemAsync("accommodationId");
-        if (accId) {
-          setAccommodationId(accId);
+        const user = await getUserByAccessToken();
+        if (user) {
+          // console.log("AuthContext - loaded accommodationId:", user.accommodationId);
+          const accId = user.accommodationId;
+          if (accId) {
+            setAccommodationId(accId);
+          }
         }
       } catch (error) {
         console.error("Error loading user data:", error);
