@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import { Event } from "../../types/zod/event";
 import { format, parseISO, isBefore, startOfDay } from "date-fns";
-import { fr } from "date-fns/locale"; // Ajouter cet import
+import { fr } from "date-fns/locale";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface DayEventsProps {
   date: string;
@@ -25,6 +26,7 @@ export const DayEvents: React.FC<DayEventsProps> = ({
   onEditEvent,
   onDeleteEvent,
 }) => {
+  const { userId } = useAuth();
   const isPastDate = isBefore(parseISO(date), startOfDay(new Date()));
 
   return (
@@ -80,20 +82,22 @@ export const DayEvents: React.FC<DayEventsProps> = ({
                   )}
                 </View>
               </View>
-              <View style={styles.eventActions}>
-                <TouchableOpacity
-                  onPress={() => onEditEvent(event)}
-                  style={styles.actionButton}
-                >
-                  <Text style={styles.editButtonText}>Modifier</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => onDeleteEvent(event)}
-                  style={[styles.actionButton, styles.deleteButton]}
-                >
-                  <Text style={styles.deleteButtonText}>Supprimer</Text>
-                </TouchableOpacity>
-              </View>
+              {event.userId === userId && (
+                <View style={styles.eventActions}>
+                  <TouchableOpacity
+                    onPress={() => onEditEvent(event)}
+                    style={styles.actionButton}
+                  >
+                    <Text style={styles.editButtonText}>Modifier</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => onDeleteEvent(event)}
+                    style={[styles.actionButton, styles.deleteButton]}
+                  >
+                    <Text style={styles.deleteButtonText}>Supprimer</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           ))
         )}
@@ -159,6 +163,10 @@ const styles = StyleSheet.create({
     borderLeftColor: "#FFB020",
   },
   completedEvent: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#33CC33",
+  },
+  confirmedEvent: {
     borderLeftWidth: 4,
     borderLeftColor: "#33CC33",
   },

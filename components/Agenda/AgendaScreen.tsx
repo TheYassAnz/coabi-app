@@ -29,7 +29,6 @@ export const AgendaScreen: React.FC = () => {
 
   const loadEvents = async () => {
     try {
-      // console.log("loadEvents - accommodationId:", accommodationId);
       const fetchedEvents = await eventService.getAllEvents();
       const formattedEvents: Event[] = fetchedEvents.map((event) => ({
         id: event._id,
@@ -37,6 +36,7 @@ export const AgendaScreen: React.FC = () => {
         startDate: format(event.plannedDate, "yyyy-MM-dd'T'HH:mm:ss"),
         endDate: format(event.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
         description: event.description,
+        userId: event.userId, // Add this
       }));
       setEvents(formattedEvents);
     } catch (error: any) {
@@ -57,6 +57,13 @@ export const AgendaScreen: React.FC = () => {
   };
 
   const handleEditEvent = (event: Event) => {
+    if (event.userId !== userId) {
+      Alert.alert(
+        "Non autorisé",
+        "Vous ne pouvez modifier que vos propres événements",
+      );
+      return;
+    }
     setEditingEvent(event);
     setIsModalVisible(true);
   };
@@ -67,7 +74,7 @@ export const AgendaScreen: React.FC = () => {
     endTime: Date;
     description?: string;
   }) => {
-    // console.log('handleSaveEvent - auth values:', { userId, accommodationId });
+    console.log("handleSaveEvent - auth values:", { userId, accommodationId });
 
     try {
       if (!userId || !accommodationId) {
@@ -104,6 +111,7 @@ export const AgendaScreen: React.FC = () => {
                   ),
                   endDate: format(newEvent.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
                   description: updatedEvent.description,
+                  userId: updatedEvent.userId,
                 }
               : e,
           ),
@@ -126,6 +134,7 @@ export const AgendaScreen: React.FC = () => {
           startDate: format(newEvent.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
           endDate: format(newEvent.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
           description: createdEvent.description,
+          userId: createdEvent.userId, // Add this line
         };
 
         setEvents([...events, event]);
@@ -151,6 +160,14 @@ export const AgendaScreen: React.FC = () => {
   };
 
   const handleDeleteEvent = async (event: Event) => {
+    if (event.userId !== userId) {
+      Alert.alert(
+        "Non autorisé",
+        "Vous ne pouvez supprimer que vos propres événements",
+      );
+      return;
+    }
+
     try {
       Alert.alert(
         "Confirmation",
@@ -171,7 +188,6 @@ export const AgendaScreen: React.FC = () => {
         ],
       );
     } catch (error: any) {
-      // console.error("Failed to delete event:", error);
       Alert.alert("Erreur", "Échec de la suppression. Veuillez réessayer.");
     }
   };

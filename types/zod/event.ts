@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export type EventStatus = "pending" | "confirmed" | "cancelled";
+
 const BaseEventSchema = z.object({
   title: z.string().max(50, "Keep under 50 characters please"),
   description: z
@@ -12,6 +14,7 @@ const BaseEventSchema = z.object({
   endDate: z.coerce
     .date()
     .refine((date) => date !== null, { message: "Required" }),
+  status: z.enum(["pending", "confirmed", "cancelled"]).optional(),
 });
 
 export const EventPostSchema = BaseEventSchema.extend({
@@ -33,7 +36,8 @@ export interface Event {
   startDate: string;
   endDate: string;
   description?: string | null;
-  status?: "pending" | "completed" | "cancelled";
+  userId?: string;
+  status?: EventStatus;
 }
 
 export interface EventPost {
