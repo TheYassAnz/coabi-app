@@ -1,4 +1,3 @@
-import { Pre } from "@expo/html-elements";
 import {
   Text,
   View,
@@ -7,8 +6,53 @@ import {
   Pressable,
   Modal,
 } from "react-native";
+import { RefundService } from "@/services/server/refund";
+import { getUserByAccessToken } from "@/services/utils";
+import { useEffect } from "react";
+import { useState } from "react";
+import { Alert } from "react-native";
+import { set } from "date-fns";
 
 export default function RefundScreen() {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [user, setUser] = useState<any>(null);
+  const [refunds, setRefunds] = useState<any[]>([]);
+  const refund = new RefundService();
+
+  // const readOwnRefund = async () => {
+  //   const userId = await getUserByAccessToken();
+  //   try {
+  //     await refund.filterRefunds({
+  //       userId: userId._id,})
+  //   }
+  //   catch (error) {
+  //     console.error("Error creating refund:", error);
+  //   }
+  // }
+
+  useEffect(() => {
+    const fetchRefund = async () => {
+      try {
+        setLoading(true);
+        const userData = await getUserByAccessToken();
+        if (!userData) {
+          Alert.alert("Erreur", "Utilisateur non trouvé");
+          return;
+        }
+        setUser(userData);
+        const refundData = await refund.filterRefunds({
+          userId: user._id,
+        });
+        setRefunds(refundData);
+        console.log("refundData", refundData);
+      } catch (error: any) {
+        Alert.alert("Erreur", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRefund();
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.firstcontainer}>
