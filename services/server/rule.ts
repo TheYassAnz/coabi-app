@@ -61,10 +61,7 @@ export class RuleService extends APIService {
 
   async deleteRuleById(id: string) {
     try {
-      const response = await this.delete(`/rules/${id}`);
-      if (response.status !== 204) {
-        throw new Error("Failed to delete rule.");
-      }
+      await this.delete(`/rules/${id}`);
     } catch (error: any) {
       throw {
         message: error?.response?.data.message || "An unknown error occurred.",

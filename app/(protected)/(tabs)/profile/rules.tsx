@@ -76,13 +76,6 @@ export default function RulesScreen() {
   const createRule = async (data: RulePost) => {
     try {
       setActionLoading(true);
-      if (!user || !user.accommodationId) {
-        Alert.alert("Erreur", "Colocation non trouvée");
-        return;
-      }
-      if (user.accommodationId) {
-        data.accommodationId = user.accommodationId;
-      }
       await ruleService.createRule(data);
 
       setRulesChange(!rulesChange);
@@ -152,23 +145,28 @@ export default function RulesScreen() {
             )}
           </View>
         ) : (
-          <VStack space="md">
-            {rules.map((rule) => (
-              <RuleCard
-                key={rule._id}
-                rule={rule}
-                isModeratorView={user?.role === "moderator"}
-                onUpdate={updateRule}
-                onDelete={removeRule}
-              />
-            ))}
-          </VStack>
+          user && (
+            <VStack space="md">
+              {rules.map((rule) => (
+                <RuleCard
+                  key={rule._id}
+                  rule={rule}
+                  isModeratorOrAdmin={user.role !== "user"}
+                  onUpdate={updateRule}
+                  onDelete={removeRule}
+                />
+              ))}
+            </VStack>
+          )
         )}
       </ScrollView>
 
-      {user?.role === "moderator" && (
+      {user && user.role !== "user" && user.accommodationId && (
         <>
-          <CreateRuleModal onCreate={createRule} />
+          <CreateRuleModal
+            accommodationId={user.accommodationId}
+            onCreate={createRule}
+          />
         </>
       )}
     </SafeAreaView>

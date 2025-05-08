@@ -74,10 +74,7 @@ export class AccommodationService extends APIService {
 
   async deleteAccommodationById(id: string) {
     try {
-      const response = await this.delete(`/accommodations/${id}`);
-      if (response.status !== 204) {
-        throw new Error("Failed to delete accommodation.");
-      }
+      await this.delete(`/accommodations/${id}`);
     } catch (error: any) {
       throw {
         message: error?.response?.data.message || "An unknown error occurred.",

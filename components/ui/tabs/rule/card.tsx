@@ -12,14 +12,14 @@ import { UpdateRuleModal } from "./update-rule";
 
 interface RuleCardProps {
   rule: RuleResponse;
-  isModeratorView: boolean;
+  isModeratorOrAdmin: boolean;
   onUpdate: (id: string, data: RulePatch) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }
 
 export default function RuleCard({
   rule,
-  isModeratorView,
+  isModeratorOrAdmin,
   onUpdate,
   onDelete,
 }: RuleCardProps) {
@@ -41,7 +41,7 @@ export default function RuleCard({
           </Text>
         )}
 
-        {isModeratorView && (
+        {isModeratorOrAdmin && (
           <HStack className="mt-4 justify-end border-t border-gray-100 pt-3">
             {confirmDelete ? (
               <>

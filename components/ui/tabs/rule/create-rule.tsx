@@ -25,13 +25,17 @@ import {
   ScrollView,
 } from "react-native";
 import { RulePostSchema, RulePost } from "@/types/zod/rule";
-import { Edit, Plus, Save, X } from "lucide-react-native";
+import { Plus, Save, X } from "lucide-react-native";
 
 interface CreateRuleFormProps {
+  accommodationId: string;
   onCreate: (data: RulePost) => Promise<void>;
 }
 
-export function CreateRuleModal({ onCreate }: CreateRuleFormProps) {
+export function CreateRuleModal({
+  accommodationId,
+  onCreate,
+}: CreateRuleFormProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,7 +50,8 @@ export function CreateRuleModal({ onCreate }: CreateRuleFormProps) {
     resolver: zodResolver(RulePostSchema),
     defaultValues: {
       title: "",
-      description: "",
+      description: null,
+      accommodationId: accommodationId,
     },
     mode: "onBlur",
     reValidateMode: "onChange",
@@ -55,7 +60,8 @@ export function CreateRuleModal({ onCreate }: CreateRuleFormProps) {
   const openModal = () => {
     reset({
       title: "",
-      description: "",
+      description: null,
+      accommodationId: accommodationId,
     });
     setOpen(true);
   };

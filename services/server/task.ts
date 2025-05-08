@@ -61,10 +61,7 @@ export class TaskService extends APIService {
 
   async deleteTaskById(id: string) {
     try {
-      const response = await this.delete(`/tasks/${id}`);
-      if (response.status !== 204) {
-        throw new Error("Failed to delete task.");
-      }
+      await this.delete(`/tasks/${id}`);
     } catch (error: any) {
       throw {
         message: error?.response?.data.message || "An unknown error occurred.",
