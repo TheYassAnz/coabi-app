@@ -11,12 +11,13 @@ import { getUserByAccessToken } from "@/services/utils";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Alert } from "react-native";
-import { set } from "date-fns";
 
 export default function RefundScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<any>(null);
-  const [refunds, setRefunds] = useState<any[]>([]);
+  const [ownRefund, setOwnRefund] = useState<any[]>([]);
+  const [theirRefund, setTheirRefund] = useState<any[]>([]);
+  const [allRefunds, setAllRefunds] = useState<any[]>([]);
   const refund = new RefundService();
 
   // const readOwnRefund = async () => {
@@ -31,7 +32,7 @@ export default function RefundScreen() {
   // }
 
   useEffect(() => {
-    const fetchRefund = async () => {
+    const fetchOwnRefund = async () => {
       try {
         setLoading(true);
         const userData = await getUserByAccessToken();
@@ -39,24 +40,76 @@ export default function RefundScreen() {
           Alert.alert("Erreur", "Utilisateur non trouvé");
           return;
         }
-        setUser(userData);
         const refundData = await refund.filterRefunds({
-          userId: user._id,
+          userId: userData._id,
         });
-        setRefunds(refundData);
-        console.log("refundData", refundData);
+        setOwnRefund(refundData);
+        console.log(ownRefund);
+        // console.log("refundData ils me doivent", refundData);
+        // console.log("userId", userData._id);
       } catch (error: any) {
         Alert.alert("Erreur", error.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchRefund();
+
+    const fetchTheirRefund = async () => {
+      try {
+        setLoading(true);
+        const userData = await getUserByAccessToken();
+        if (!userData) {
+          Alert.alert("Erreur", "Utilisateur non trouvé");
+          return;
+        }
+        // setUser(userData);
+        const refundData = await refund.filterRefunds({
+          roomateId: userData._id,
+        });
+        setTheirRefund(refundData);
+        // console.log("refundData je dois", refundData);
+      } catch (error: any) {
+        Alert.alert("Erreur", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // const getAllRefunds = async () => {
+    //   try{
+    //     setLoading(true);
+    //     const userData = await getUserByAccessToken();
+    //     if (!userData) {
+    //       Alert.alert("Erreur", "Utilisateur non trouvé");
+    //       return;
+    //     }
+    //     setUser(userData);
+    //     const refundData = await refund.getAllRefunds();
+    //     setRefunds(refundData);
+    //     console.log("refundData", refunds);
+    //   } catch (error: any) {
+    //     Alert.alert("Erreur", error.message);
+    //   }
+    // };
+    fetchTheirRefund();
+    fetchOwnRefund();
+    // getAllRefunds();
   }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.firstcontainer}>
-        <Text style={styles.text}>Refund</Text>
+        <Text style={styles.text}>Ils me doivent :</Text>
+        {ownRefund.length === 0 ? (
+          <Text style={styles.text}>Aucun remboursement</Text>
+        ) : (
+          ownRefund.map((item, index) => (
+            <Text key={index} style={styles.text}>
+              {item.roommateId} - {item.toRefund}€ -{" "}
+              {item.title || "Sans description"}
+            </Text>
+          ))
+        )}
       </View>
       <Text style={styles.text}>Ecran du refund</Text>
       <TextInput

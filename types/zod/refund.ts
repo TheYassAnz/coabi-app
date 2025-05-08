@@ -17,12 +17,14 @@ export const RefundBatchPostSchema = z.object({
     .max(1000000, "Not possible"),
   userId: z.string(),
   roommateIds: z.string().array(),
+  accommodationId: z.string(),
 });
 
 export const RefundResponseSchema = BaseRefundSchema.extend({
   _id: z.string(),
   userId: z.string(),
   roommateId: z.string(),
+  accommodationId: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
