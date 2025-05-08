@@ -62,9 +62,9 @@ export default function RefundScreen() {
           Alert.alert("Erreur", "Utilisateur non trouvé");
           return;
         }
-        // setUser(userData);
+        setUser(userData);
         const refundData = await refund.filterRefunds({
-          roomateId: userData._id,
+          roommateId: userData._id,
         });
         setTheirRefund(refundData);
         // console.log("refundData je dois", refundData);
@@ -104,6 +104,7 @@ export default function RefundScreen() {
           <Text style={styles.text}>Aucun remboursement</Text>
         ) : (
           ownRefund.map((item, index) => (
+            // Bien penser à mettre le style à jour ici.
             <Text key={index} style={styles.text}>
               {item.roommateId} - {item.toRefund}€ -{" "}
               {item.title || "Sans description"}
@@ -111,6 +112,23 @@ export default function RefundScreen() {
           ))
         )}
       </View>
+      <View style={styles.secondcontainer}>
+        <Text style={styles.text}>Je dois :</Text>
+        {ownRefund.length === 0 ||
+        ownRefund.filter((item) => item.roommateId == user._id).length === 0 ? (
+          <Text style={styles.text}>Je ne dois rien</Text>
+        ) : (
+          ownRefund
+            .filter((item) => item.roommateId == user._id)
+            .map((item, index) => (
+              <Text key={index} style={styles.text}>
+                {item.userId} - {item.toRefund}€ -{" "}
+                {item.title || "Sans description"}
+              </Text>
+            ))
+        )}
+      </View>
+
       <Text style={styles.text}>Ecran du refund</Text>
       <TextInput
         style={styles.input}
@@ -135,6 +153,10 @@ const styles = StyleSheet.create({
   },
   firstcontainer: {
     backgroundColor: "red",
+    flex: 0.3,
+  },
+  secondcontainer: {
+    backgroundColor: "blue",
     flex: 0.3,
   },
   text: {
