@@ -13,7 +13,7 @@ const BaseRuleSchema = z.object({
 });
 
 export const RulePostSchema = BaseRuleSchema.extend({
-  accommodationId: z.string(),
+  accommodationId: z.string().optional(),
 });
 
 export const RuleResponseSchema = RulePostSchema.extend({

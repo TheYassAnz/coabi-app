@@ -31,6 +31,13 @@ export default function ProfileLayout() {
         }}
       />
       <Stack.Screen
+        name="rules"
+        options={{
+          title: "See rules",
+          headerShown: true,
+        }}
+      />
+      <Stack.Screen
         name="roommate/[username]"
         options={{
           title: "See roommate",

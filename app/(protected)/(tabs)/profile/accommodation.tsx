@@ -95,7 +95,7 @@ export default function AccommodationScreen() {
           </>
         ) : (
           <View className="items-center justify-center py-10">
-            <View>No accommodation found</View>
+            <Text className="text-gray-500">No accommodation found</Text>
           </View>
         )}
       </ScrollView>
