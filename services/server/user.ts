@@ -70,10 +70,7 @@ export class UserService extends APIService {
     try {
       const authService = new AuthService();
       await authService.logout();
-      const response = await this.delete(`/users/${id}`);
-      if (response.status !== 204) {
-        throw new Error("Failed to delete user.");
-      }
+      await this.delete(`/users/${id}`);
     } catch (error: any) {
       throw {
         message: error?.response?.data.message || "An unknown error occurred.",
