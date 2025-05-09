@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Alert, TextInput } from "react-native";
-import { Calendar } from "./Calendar";
-import { DayEvents } from "./DayEvents";
-import { AddEventModal } from "./AddEventModal";
+import { View, Alert, TextInput } from "react-native";
+import { Calendar } from "./calendar";
+import { DayEvents } from "./day-events";
+import { AddEventModal } from "./add-event-modal";
 import { format, parseISO } from "date-fns";
-import { EventService } from "../../../services/server/event";
-import { EventPost, EventPatch } from "../../../types/zod/event";
-import { useAuth } from "../../../contexts/AuthContext";
-import { Event } from "../../../types/zod/event";
+import { EventService } from "@/services/server/event";
+import { EventPost, EventPatch } from "@/types/zod/event";
+import { useAuth } from "@/contexts/AuthContext";
+import { Event } from "@/types/zod/event";
 
 export const AgendaScreen: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(
@@ -20,10 +20,7 @@ export const AgendaScreen: React.FC = () => {
   const eventService = new EventService();
   const { userId, accommodationId } = useAuth();
 
-  // console.log('Auth values:', { userId, accommodationId });
-
   useEffect(() => {
-    // console.log('useEffect - accommodationId:', accommodationId);
     loadEvents();
   }, []);
 
@@ -74,11 +71,8 @@ export const AgendaScreen: React.FC = () => {
     endTime: Date;
     description?: string;
   }) => {
-    console.log("handleSaveEvent - auth values:", { userId, accommodationId });
-
     try {
       if (!userId || !accommodationId) {
-        // console.log('Missing auth values:', { userId, accommodationId });
         Alert.alert(
           "Error",
           "Vous devez être connecté et avoir un logement sélectionné pour créer un événement",
@@ -248,9 +242,9 @@ export const AgendaScreen: React.FC = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-gray-100">
       <TextInput
-        style={styles.searchInput}
+        className="bg-white p-3 rounded-lg m-2.5 border border-gray-200 text-base text-black shadow"
         placeholder="Rechercher des événements..."
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -277,28 +271,3 @@ export const AgendaScreen: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  searchInput: {
-    backgroundColor: "#FFFFFF",
-    padding: 12,
-    borderRadius: 8,
-    margin: 10,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    fontSize: 16,
-    color: "#000000",
-    shadowColor: "#000000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-});

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Calendar as RNCalendar, LocaleConfig } from "react-native-calendars";
 
 // Configuration de la localisation française
@@ -56,7 +56,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   markedDates,
 }) => {
   return (
-    <View style={styles.container}>
+    <View className="bg-white rounded-lg p-2.5 m-2.5 shadow-md">
       <RNCalendar
         onDayPress={(day: { dateString: string }) => onDayPress(day.dateString)}
         markedDates={markedDates}
@@ -88,20 +88,3 @@ export const Calendar: React.FC<CalendarProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    padding: 10,
-    margin: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-});

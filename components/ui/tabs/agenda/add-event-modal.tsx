@@ -3,14 +3,13 @@ import {
   View,
   Text,
   TextInput,
-  StyleSheet,
   TouchableOpacity,
   Modal,
   Platform,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { format, parseISO } from "date-fns";
-import { Event } from "../../../types/zod/event";
+import { Event } from "@/types/zod/event";
 
 interface AddEventModalProps {
   visible: boolean;
@@ -78,43 +77,45 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>
+      <View className="flex-1 bg-black/50 justify-center items-center">
+        <View className="bg-white rounded-2xl p-6 w-[90%] max-h-[90%] shadow-md">
+          <Text className="text-2xl font-semibold mb-6 text-black text-center">
             {editEvent ? "Modifier l'événement" : "Nouvel événement"}
           </Text>
 
           <TextInput
-            style={styles.input}
+            className="border border-gray-200 rounded-xl p-4 mb-4 text-base bg-gray-100 text-black"
             placeholder="Titre de l'événement"
             value={title}
             onChangeText={setTitle}
             placeholderTextColor="#666"
           />
 
-          <View style={styles.timeSection}>
-            <Text style={styles.timeSectionTitle}>Horaires</Text>
+          <View className="mb-5">
+            <Text className="text-base font-medium text-black mb-2">
+              Horaires
+            </Text>
             <TouchableOpacity
-              style={styles.timeButton}
+              className="bg-gray-100 rounded-xl p-4 mb-2 border border-gray-200"
               onPress={() => setShowStartTimePicker(true)}
             >
-              <Text style={styles.timeButtonText}>
+              <Text className="text-base text-black">
                 Début : {format(startTime, "HH:mm")}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.timeButton}
+              className="bg-gray-100 rounded-xl p-4 mb-2 border border-gray-200"
               onPress={() => setShowEndTimePicker(true)}
             >
-              <Text style={styles.timeButtonText}>
+              <Text className="text-base text-black">
                 Fin : {format(endTime, "HH:mm")}
               </Text>
             </TouchableOpacity>
           </View>
 
           <TextInput
-            style={[styles.input, styles.descriptionInput]}
+            className="border border-gray-200 rounded-xl p-4 mb-4 text-base bg-gray-100 text-black h-24 align-top"
             placeholder="Description (optionnelle)"
             value={description}
             onChangeText={setDescription}
@@ -123,7 +124,7 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
           />
 
           {(showStartTimePicker || showEndTimePicker) && (
-            <View style={styles.timePickerContainer}>
+            <View className="bg-white rounded-xl mb-4 overflow-hidden border border-gray-200">
               <DateTimePicker
                 value={showStartTimePicker ? startTime : endTime}
                 mode="time"
@@ -144,18 +145,20 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
             </View>
           )}
 
-          <View style={styles.buttonContainer}>
+          <View className="flex-row justify-between mt-2">
             <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
+              className="flex-[0.48] p-4 rounded-xl items-center justify-center bg-gray-100 border border-gray-200"
               onPress={onClose}
             >
-              <Text style={styles.buttonText}>Annuler</Text>
+              <Text className="text-base font-semibold text-black">
+                Annuler
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button, styles.saveButton]}
+              className="flex-[0.48] p-4 rounded-xl items-center justify-center bg-gray-800"
               onPress={handleSave}
             >
-              <Text style={[styles.buttonText, styles.saveButtonText]}>
+              <Text className="text-base font-semibold text-white">
                 Enregistrer
               </Text>
             </TouchableOpacity>
@@ -165,105 +168,3 @@ export const AddEventModal: React.FC<AddEventModalProps> = ({
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 24,
-    width: "90%",
-    maxHeight: "90%",
-    elevation: 5,
-    shadowColor: "#000000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginBottom: 24,
-    color: "#000000",
-    textAlign: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    fontSize: 16,
-    backgroundColor: "#F5F5F5",
-    color: "#000000",
-  },
-  timeSection: {
-    marginBottom: 20,
-  },
-  timeSectionTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#000000",
-    marginBottom: 8,
-  },
-  timeButton: {
-    backgroundColor: "#F5F5F5",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  timeButtonText: {
-    fontSize: 16,
-    color: "#000000",
-  },
-  timePickerContainer: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    marginBottom: 16,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 8,
-  },
-  button: {
-    flex: 0.48,
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cancelButton: {
-    backgroundColor: "#F5F5F5",
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  saveButton: {
-    backgroundColor: "#333333",
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000000",
-  },
-  saveButtonText: {
-    color: "#FFFFFF",
-  },
-  descriptionInput: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-});

@@ -16,8 +16,8 @@ import { getUserByAccessToken } from "@/services/utils";
 import { HStack } from "@/components/ui/hstack";
 import { VStack } from "@/components/ui/vstack";
 import { ArrowLeftIcon, FileText } from "lucide-react-native";
-import RuleCard from "@/components/ui/tabs/rule/card";
-import { CreateRuleModal } from "@/components/ui/tabs/rule/create-rule";
+import RuleCard from "@/components/ui/tabs/profile/accommodation/rule/card";
+import { CreateRuleModal } from "@/components/ui/tabs/profile/accommodation/rule/create-rule";
 
 export default function RulesScreen() {
   const [rules, setRules] = useState<RuleResponse[]>([]);

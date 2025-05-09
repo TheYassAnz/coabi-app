@@ -24,8 +24,8 @@ import {
   Shield,
   UserMinus,
 } from "lucide-react-native";
-import { InfoItem } from "@/components/ui/tabs/roommate/info-item";
-import { RemoveRoommateModal } from "@/components/ui/tabs/roommate/remove-roommate-modal";
+import { InfoItem } from "@/components/ui/tabs/profile/accommodation/roommate/info-item";
+import { RemoveRoommateModal } from "@/components/ui/tabs/profile/accommodation/roommate/remove-roommate-modal";
 
 export default function RoommateProfileScreen() {
   const { username } = useLocalSearchParams();
