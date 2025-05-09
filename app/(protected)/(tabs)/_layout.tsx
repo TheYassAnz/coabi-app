@@ -1,31 +1,7 @@
-import { Tabs, useRouter } from "expo-router";
+import { Tabs } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useEffect, useState } from "react";
-import { getUserByAccessToken } from "@/services/utils";
 
 export default function TabLayout() {
-  const router = useRouter();
-  const [isJoinedAccommodation, setIsJoinedAccommodation] = useState<
-    boolean | null
-  >(null);
-  useEffect(() => {
-    getUserByAccessToken()
-      .then((user: any) => {
-        if (user.accommodationId) {
-          setIsJoinedAccommodation(true);
-        } else {
-          router.replace("/accommodation/join");
-        }
-      })
-      .catch(() => {
-        setIsJoinedAccommodation(false);
-      });
-  }, []);
-
-  if (isJoinedAccommodation === null) {
-    return null;
-  }
-
   return (
     <Tabs
       screenOptions={{
