@@ -98,7 +98,7 @@ export default function ProfileScreen() {
   };
 
   const handleLeaveAccommodation = () => {
-    if (moderators.length === 1) {
+    if (moderators.length === 1 && user && user.role === "moderator") {
       cannotLeave();
     } else {
       leaveAccommodation();
