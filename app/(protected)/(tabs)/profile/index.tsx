@@ -68,6 +68,7 @@ export default function ProfileScreen() {
     try {
       await userService.updateUserById(user._id, { accommodationId: null });
       Alert.alert("Succès", "Vous avez quitté la colocation");
+      router.replace("/login");
       setWarningLeaveAccommodation(false);
     } catch (error: any) {
       Alert.alert("Erreur", error.message);
