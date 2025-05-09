@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 import { Center } from "@/components/ui/center";
 import { VStack } from "@/components/ui/vstack";
 import { Heading } from "@/components/ui/heading";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { Input, InputField } from "@/components/ui/input";
 import {
@@ -21,12 +21,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserService } from "@/services/server/user";
 import { getUserByAccessToken } from "@/services/utils";
 import { router } from "expo-router";
+import { HStack } from "@/components/ui/hstack";
+import { ArrowLeftIcon, Icon, LogOutIcon } from "lucide-react-native";
+import { AuthService } from "@/services/server/auth";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const AccessCodeSchema = z.object({
   accessCode: z.string().min(6, "Access code must be at least 6 characters"),
 });
 
 export default function JoinPage() {
+  const logout = () => {
+    try {
+      const authService = new AuthService();
+      authService.logout();
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+    }
+  };
   const {
     handleSubmit,
     formState: { errors },
@@ -64,6 +76,12 @@ export default function JoinPage() {
   return (
     <Center className="h-full w-full">
       <VStack className="w-full px-10" space="xl">
+        <HStack className="w-full justify-end">
+          <Button variant="outline" size="md" onPress={() => logout()}>
+            <ButtonText>Logout</ButtonText>
+            <ButtonIcon as={LogOutIcon} />
+          </Button>
+        </HStack>
         <VStack>
           <Heading size="4xl">Join an accommodation</Heading>
           <Text>Enter the access code to join an accommodation</Text>
