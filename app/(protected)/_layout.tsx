@@ -1,8 +1,9 @@
 import { Stack, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getUserByAccessToken } from "@/services/utils";
 
 import { Alert } from "react-native";
+import { AuthService } from "@/services/server/auth";
 
 export default function ProtectedLayout() {
   const router = useRouter();
@@ -12,8 +13,8 @@ export default function ProtectedLayout() {
       try {
         const userData = await getUserByAccessToken(); // logout if not found
         if (!userData) {
-          router.replace("/login");
-          return;
+          const authService = new AuthService();
+          return await authService.logout();
         }
         if (userData.accommodationId === null) {
           router.replace("/accommodation/join");

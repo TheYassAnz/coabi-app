@@ -28,8 +28,7 @@ export default function ProfileScreen() {
         const userData = await getUserByAccessToken();
         if (!userData) {
           Alert.alert("Non authentifié");
-          router.replace("/login");
-          return;
+          return authService.logout();
         }
         setUser(userData);
         const moderatorsData = await userService.filterUsers({
@@ -68,8 +67,8 @@ export default function ProfileScreen() {
     try {
       await userService.updateUserById(user._id, { accommodationId: null });
       Alert.alert("Succès", "Vous avez quitté la colocation");
-      router.replace("/login");
       setWarningLeaveAccommodation(false);
+      return authService.logout();
     } catch (error: any) {
       Alert.alert("Erreur", error.message);
     }
@@ -78,7 +77,6 @@ export default function ProfileScreen() {
   const logout = async () => {
     try {
       await authService.logout();
-      router.replace("/login");
     } catch (error: any) {
       Alert.alert("Erreur", error.message);
     }
@@ -93,7 +91,7 @@ export default function ProfileScreen() {
       await userService.deleteUserById(user._id);
       Alert.alert("Succès", "Votre compte a été supprimé");
       setWarningDelete(false);
-      router.replace("/login");
+      return authService.logout();
     } catch (error: any) {
       Alert.alert("Erreur", error.message);
     }
