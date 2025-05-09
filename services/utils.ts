@@ -4,6 +4,20 @@ import { AuthService } from "./server/auth";
 import { UserService } from "./server/user";
 import { UserResponse } from "@/types/zod/user";
 
+export async function getUserById(): Promise<string | null> {
+  const accessToken = await SecureStore.getItemAsync("accessToken");
+  if (!accessToken) {
+    return null;
+  }
+  try {
+    const decodedToken: { id: string } = jwtDecode(accessToken);
+    return decodedToken.id;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
+}
+
 export async function getUserByAccessToken(): Promise<UserResponse | void> {
   const authService = new AuthService();
   const accessToken = await SecureStore.getItemAsync("accessToken");
