@@ -20,17 +20,6 @@ export default function RefundScreen() {
   const [allRefunds, setAllRefunds] = useState<any[]>([]);
   const refund = new RefundService();
 
-  // const readOwnRefund = async () => {
-  //   const userId = await getUserByAccessToken();
-  //   try {
-  //     await refund.filterRefunds({
-  //       userId: userId._id,})
-  //   }
-  //   catch (error) {
-  //     console.error("Error creating refund:", error);
-  //   }
-  // }
-
   useEffect(() => {
     const fetchOwnRefund = async () => {
       try {
@@ -44,7 +33,6 @@ export default function RefundScreen() {
           userId: userData._id,
         });
         setOwnRefund(refundData);
-        console.log(ownRefund);
         // console.log("refundData ils me doivent", refundData);
         // console.log("userId", userData._id);
       } catch (error: any) {
@@ -75,74 +63,70 @@ export default function RefundScreen() {
       }
     };
 
-    // const getAllRefunds = async () => {
-    //   try{
-    //     setLoading(true);
-    //     const userData = await getUserByAccessToken();
-    //     if (!userData) {
-    //       Alert.alert("Erreur", "Utilisateur non trouvé");
-    //       return;
-    //     }
-    //     setUser(userData);
-    //     const refundData = await refund.getAllRefunds();
-    //     setRefunds(refundData);
-    //     console.log("refundData", refunds);
-    //   } catch (error: any) {
-    //     Alert.alert("Erreur", error.message);
-    //   }
-    // };
+    const getAllRefunds = async () => {
+      try {
+        setLoading(true);
+        const userData = await getUserByAccessToken();
+        if (!userData) {
+          Alert.alert("Erreur", "Utilisateur non trouvé");
+          return;
+        }
+        setUser(userData);
+        const refundData = await refund.getAllRefunds();
+        setAllRefunds(refundData);
+        // console.log("refundData", refunds);
+      } catch (error: any) {
+        Alert.alert("Erreur", error.message);
+      }
+    };
     fetchTheirRefund();
     fetchOwnRefund();
-    // getAllRefunds();
+    getAllRefunds();
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.firstcontainer}>
-        <Text style={styles.text}>Ils me doivent :</Text>
-        {ownRefund.length === 0 ? (
+        <Text>Je dois rembourser :</Text>
+        {ownRefund.filter((item) => item.done == true) ||
+        ownRefund.length == 0 ? (
           <Text style={styles.text}>Aucun remboursement</Text>
         ) : (
-          ownRefund.map((item, index) => (
-            // Bien penser à mettre le style à jour ici.
-            <Text key={index} style={styles.text}>
-              {item.roommateId} - {item.toRefund}€ -{" "}
-              {item.title || "Sans description"}
-            </Text>
-          ))
-        )}
-      </View>
-      <View style={styles.secondcontainer}>
-        <Text style={styles.text}>Je dois :</Text>
-        {ownRefund.length === 0 ||
-        ownRefund.filter((item) => item.roommateId == user._id).length === 0 ? (
-          <Text style={styles.text}>Je ne dois rien</Text>
-        ) : (
           ownRefund
-            .filter((item) => item.roommateId == user._id)
+            .filter((item) => item.done === false)
             .map((item, index) => (
+              // Bien penser à mettre le style à jour ici.
               <Text key={index} style={styles.text}>
-                {item.userId} - {item.toRefund}€ -{" "}
+                {item.roommateId} - {item.toRefund}€ -{" "}
                 {item.title || "Sans description"}
               </Text>
             ))
         )}
       </View>
+      <View style={styles.secondcontainer}>
+        <Text>Ils doivent me rembourser :</Text>
+        {theirRefund
+          .filter((item) => item.done === false)
+          .map((item, index) => (
+            <Text key={index} style={styles.text}>
+              {item.userId} - {item.toRefund}€ -{" "}
+              {item.title || "Sans description"}
+            </Text>
+          ))}
+      </View>
 
-      <Text style={styles.text}>Ecran du refund</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="10€"
-        keyboardType="numeric"
-      />
-      <Pressable
-        style={styles.button}
-        onPress={() => {
-          console.log("Refund created");
-        }}
-      >
-        <Text>Create a refund</Text>
-      </Pressable>
+      <View style={styles.thirdcontainer}>
+        <Text>Historique des remboursements :</Text>
+
+        {allRefunds
+          .filter((item) => item.done === true)
+          .map((item, index) => (
+            <Text key={index} style={styles.text}>
+              {item.userId} - {item.toRefund}€ -{" "}
+              {item.title || "Sans description"}
+            </Text>
+          ))}
+      </View>
     </View>
   );
 }
@@ -157,6 +141,10 @@ const styles = StyleSheet.create({
   },
   secondcontainer: {
     backgroundColor: "blue",
+    flex: 0.3,
+  },
+  thirdcontainer: {
+    backgroundColor: "green",
     flex: 0.3,
   },
   text: {
