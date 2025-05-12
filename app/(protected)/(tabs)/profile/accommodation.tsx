@@ -13,11 +13,11 @@ import {
 import { AccommodationService } from "@/services/server/accommodation";
 import { UserService } from "@/services/server/user";
 import { getUserByAccessToken } from "@/services/utils";
-import { AccommodationHeader } from "@/components/ui/tabs/accommodation/accommodation-header";
-import { AccommodationInfo } from "@/components/ui/tabs/accommodation/accommodation-info";
-import { DetailsCard } from "@/components/ui/tabs/accommodation/details-card";
-import { InviteCodeCard } from "@/components/ui/tabs/accommodation/invite-code-card";
-import { MembersList } from "@/components/ui/tabs/accommodation/members-list";
+import { AccommodationHeader } from "@/components/ui/tabs/profile/accommodation/accommodation-header";
+import { AccommodationInfo } from "@/components/ui/tabs/profile/accommodation/accommodation-info";
+import { DetailsCard } from "@/components/ui/tabs/profile/accommodation/details-card";
+import { InviteCodeCard } from "@/components/ui/tabs/profile/accommodation/invite-code-card";
+import { MembersList } from "@/components/ui/tabs/profile/accommodation/members-list";
 
 export default function AccommodationScreen() {
   const [accommodation, setAccommodation] =

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export type EventStatus = "pending" | "confirmed" | "cancelled";
+
 const BaseEventSchema = z.object({
   title: z.string().max(50, "Keep under 50 characters please"),
   description: z
@@ -12,6 +14,7 @@ const BaseEventSchema = z.object({
   endDate: z.coerce
     .date()
     .refine((date) => date !== null, { message: "Required" }),
+  status: z.enum(["pending", "confirmed", "cancelled"]).optional(),
 });
 
 export const EventPostSchema = BaseEventSchema.extend({
@@ -27,6 +30,30 @@ export const EventResponseSchema = EventPostSchema.extend({
 
 export const EventPatchSchema = BaseEventSchema.partial();
 
-export type EventPost = z.infer<typeof EventPostSchema>;
+export interface Event {
+  id: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  description?: string | null;
+  userId?: string;
+  status?: EventStatus;
+}
+
+export interface EventPost {
+  title: string;
+  description: string | null;
+  plannedDate: Date;
+  endDate: Date;
+  userId: string;
+  accommodationId: string | null;
+}
+
+export interface EventPatch {
+  title?: string;
+  description?: string | null;
+  plannedDate?: Date;
+  endDate?: Date;
+}
+
 export type EventResponse = z.infer<typeof EventResponseSchema>;
-export type EventPatch = z.infer<typeof EventPatchSchema>;
