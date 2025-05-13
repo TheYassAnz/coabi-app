@@ -51,58 +51,62 @@ export default function LoginScreen() {
     <Center className="h-full w-full">
       <VStack className="w-full px-10" space="xl">
         <VStack>
-          <Heading size="4xl">Sign In</Heading>
-          <Text>Sign in to start using COABI app</Text>
+          <Heading size="4xl">Se connecter</Heading>
+          <Text>Connectez-vous pour utiliser l'application COABI</Text>
         </VStack>
 
-        <FormControl isInvalid={!!errors.username} size="lg">
-          <FormControlLabel>
-            <FormControlLabelText size="xl">Username</FormControlLabelText>
-          </FormControlLabel>
-          <Input className="my-1" size="xl">
-            <InputField
-              placeholder="Enter your username"
-              autoCapitalize="none"
-              type="text"
-              value={watch("username")}
-              onChangeText={(text) => setValue("username", text)}
-              onBlur={() => trigger("username")}
-            />
-          </Input>
-          {errors.username && (
-            <FormControlError>
-              <FormControlErrorText>
-                {errors.username.message}
-              </FormControlErrorText>
-            </FormControlError>
-          )}
-        </FormControl>
+        <VStack space="lg">
+          <FormControl isInvalid={!!errors.username} size="lg">
+            <FormControlLabel>
+              <FormControlLabelText size="xl">Identifiant</FormControlLabelText>
+            </FormControlLabel>
+            <Input size="xl">
+              <InputField
+                placeholder="Entrez votre identifiant"
+                autoCapitalize="none"
+                type="text"
+                value={watch("username")}
+                onChangeText={(text) => setValue("username", text)}
+                onBlur={() => trigger("username")}
+              />
+            </Input>
+            {errors.username && (
+              <FormControlError>
+                <FormControlErrorText>
+                  {errors.username.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
 
-        <FormControl isInvalid={!!errors.password} size="lg">
-          <FormControlLabel>
-            <FormControlLabelText size="xl">Password</FormControlLabelText>
-          </FormControlLabel>
-          <Input className="my-1" size="xl">
-            <InputField
-              placeholder="Enter your password"
-              type="password"
-              value={watch("password")}
-              onChangeText={(text) => setValue("password", text)}
-              onBlur={() => trigger("password")}
-            />
-          </Input>
-          {errors.password && (
-            <FormControlError>
-              <FormControlErrorText>
-                {errors.password.message}
-              </FormControlErrorText>
-            </FormControlError>
-          )}
-        </FormControl>
+          <FormControl isInvalid={!!errors.password} size="lg">
+            <FormControlLabel>
+              <FormControlLabelText size="xl">
+                Mot de passe
+              </FormControlLabelText>
+            </FormControlLabel>
+            <Input size="xl">
+              <InputField
+                placeholder="Entrez votre mot de passe"
+                type="password"
+                value={watch("password")}
+                onChangeText={(text) => setValue("password", text)}
+                onBlur={() => trigger("password")}
+              />
+            </Input>
+            {errors.password && (
+              <FormControlError>
+                <FormControlErrorText>
+                  {errors.password.message}
+                </FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+        </VStack>
 
         <VStack space="sm">
           <Button variant="solid" size="md" onPress={handleSubmit(onSubmit)}>
-            <ButtonText>Sign In</ButtonText>
+            <ButtonText>Se connecter</ButtonText>
           </Button>
           <Button
             className=""
@@ -112,7 +116,7 @@ export default function LoginScreen() {
               router.replace("/register");
             }}
           >
-            <ButtonText>Sign Up</ButtonText>
+            <ButtonText>S'inscrire</ButtonText>
           </Button>
         </VStack>
       </VStack>
