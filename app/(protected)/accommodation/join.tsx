@@ -27,7 +27,9 @@ import { AuthService } from "@/services/server/auth";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const AccessCodeSchema = z.object({
-  accessCode: z.string().min(6, "Access code must be at least 6 characters"),
+  accessCode: z
+    .string()
+    .min(6, "Le code d'accès doit faire au moins 6 caractères"),
 });
 
 export default function JoinPage() {
@@ -64,7 +66,7 @@ export default function JoinPage() {
       userService.joinAccommodationByCode(user._id, {
         code: data.accessCode,
       });
-      Alert.alert("Success", "You have joined the accommodation");
+      Alert.alert("Bravo!", "Vous avez rejoint le foyer avec succès.");
       router.replace("/");
     } catch (error: any) {
       Alert.alert("Error", error.message);
@@ -78,23 +80,23 @@ export default function JoinPage() {
       <VStack className="w-full px-10" space="xl">
         <HStack className="w-full justify-end">
           <Button variant="outline" size="md" onPress={() => logout()}>
-            <ButtonText>Logout</ButtonText>
+            <ButtonText>Se deconnecter</ButtonText>
             <ButtonIcon as={LogOutIcon} />
           </Button>
         </HStack>
         <VStack>
-          <Heading size="4xl">Join an accommodation</Heading>
-          <Text>Enter the access code to join an accommodation</Text>
+          <Heading size="4xl">Rejoindre un foyer</Heading>
+          <Text>Entrer le code d'accès afin de rejoindre le foyer</Text>
         </VStack>
 
         <FormControl className="mt-5">
           <FormControlLabel>
-            <FormControlLabelText size="lg">Access Code</FormControlLabelText>
+            <FormControlLabelText size="lg">Code d'accès</FormControlLabelText>
           </FormControlLabel>
 
           <Input className="w-full" size="lg" isInvalid={!!errors.accessCode}>
             <InputField
-              placeholder="XXXXXX"
+              placeholder="Entrez le code d'accès"
               autoCapitalize="none"
               type="text"
               value={watch("accessCode")}
@@ -106,7 +108,8 @@ export default function JoinPage() {
           </Input>
           <FormControlHelper>
             <FormControlHelperText>
-              Enter the access code to join the accommodation
+              Le code d'accès est un code unique qui vous permet de rejoindre un
+              foyer. Il est généralement fourni par l'administrateur du foyer.
             </FormControlHelperText>
           </FormControlHelper>
           {errors.accessCode && (
@@ -123,9 +126,8 @@ export default function JoinPage() {
           className="mt-5"
           variant="solid"
           size="lg"
-          isLoading={loading}
         >
-          <ButtonText>Join</ButtonText>
+          <ButtonText>Rejoindre</ButtonText>
         </Button>
       </VStack>
     </Center>
