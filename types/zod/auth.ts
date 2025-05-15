@@ -24,7 +24,7 @@ const BaseRegisterSchema = z
       .max(50, "L'email doit faire moins de 50 caractères"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords must match",
+    message: "Les mots de passe ne correspondent pas",
     path: ["confirmPassword"],
   });
 

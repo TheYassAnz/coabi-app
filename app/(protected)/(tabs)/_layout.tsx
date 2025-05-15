@@ -28,20 +28,20 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="refund"
-        options={{
-          title: "Refund",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="attach-money" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="task"
         options={{
           title: "Tasks",
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="check" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="refund"
+        options={{
+          title: "Refund",
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="attach-money" size={24} color={color} />
           ),
         }}
       />

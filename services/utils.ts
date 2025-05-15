@@ -36,3 +36,7 @@ export async function getUserByAccessToken(): Promise<UserResponse | void> {
     };
   }
 }
+
+export function loopUntilNumber<T>(list: T[], num: number): T[] {
+  return list.slice(0, num);
+}

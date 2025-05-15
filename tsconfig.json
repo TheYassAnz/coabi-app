@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["./*"],
       "tailwind.config": ["./tailwind.config.js"]
-    }
+    },
+    "types": ["jest"]
   },
   "include": [
     "**/*.ts",
