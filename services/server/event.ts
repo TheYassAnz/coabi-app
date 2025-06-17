@@ -61,10 +61,7 @@ export class EventService extends APIService {
 
   async deleteEventById(id: string) {
     try {
-      const response = await this.delete(`/events/${id}`);
-      if (response.status !== 204) {
-        throw new Error("Failed to delete event.");
-      }
+      await this.delete(`/events/${id}`);
     } catch (error: any) {
       throw {
         message: error?.response?.data.message || "An unknown error occurred.",

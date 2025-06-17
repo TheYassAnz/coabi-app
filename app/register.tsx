@@ -8,7 +8,6 @@ import {
   FormControlLabel,
   FormControlLabelText,
 } from "@/components/ui/form-control";
-import { HStack } from "@/components/ui/hstack";
 import { AlertCircleIcon } from "@/components/ui/icon";
 import { Input, InputField, InputSlot } from "@/components/ui/input";
 import { VStack } from "@/components/ui/vstack";
@@ -20,6 +19,8 @@ import { Alert, SafeAreaView } from "react-native";
 import { useForm } from "react-hook-form";
 import { RegisterSchema } from "@/types/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Heading } from "@/components/ui/heading";
+import { Text } from "@/components/ui/text";
 
 export default function RegisterPage() {
   const {
@@ -51,7 +52,7 @@ export default function RegisterPage() {
     const registration = new AuthService();
     try {
       await registration.register(data);
-      Alert.alert("Congratulations!", "Account created");
+      Alert.alert("Felicitations!", "Votre compte a été créé avec succès.");
       router.replace("/login");
       reset();
     } catch (error: any) {
@@ -63,22 +64,24 @@ export default function RegisterPage() {
     <SafeAreaView>
       <Center className="h-full w-full">
         <VStack className="w-full px-10" space="xl">
+          <VStack>
+            <Heading size="4xl">S'inscrire</Heading>
+            <Text>Créez votre compte pour utiliser l'application COABI</Text>
+          </VStack>
           <FormControl size="lg" isInvalid={!!errors.username}>
             <FormControlLabel>
-              <FormControlLabelText size="xl">Username</FormControlLabelText>
+              <FormControlLabelText size="xl">Identifiant</FormControlLabelText>
             </FormControlLabel>
-            <HStack space="md" className="w-full items-center">
-              <Input className="my-1 flex-1" size="xl">
-                <InputField
-                  placeholder="Enter your username"
-                  autoCapitalize="none"
-                  type="text"
-                  value={watch("username")}
-                  onChangeText={(text) => setValue("username", text)}
-                  onBlur={() => trigger("username")}
-                />
-              </Input>
-            </HStack>
+            <Input className="" size="xl">
+              <InputField
+                placeholder="Entrez votre identifiant"
+                autoCapitalize="none"
+                type="text"
+                value={watch("username")}
+                onChangeText={(text) => setValue("username", text)}
+                onBlur={() => trigger("username")}
+              />
+            </Input>
             {errors.username && (
               <FormControlError>
                 <FormControlErrorIcon as={AlertCircleIcon} />
@@ -93,9 +96,9 @@ export default function RegisterPage() {
             <FormControlLabel>
               <FormControlLabelText size="xl">Email</FormControlLabelText>
             </FormControlLabel>
-            <Input className="my-1" size="xl">
+            <Input size="xl">
               <InputField
-                placeholder="Enter your email"
+                placeholder="Entrez votre email"
                 autoCapitalize="none"
                 type="text"
                 value={watch("email")}
@@ -115,11 +118,13 @@ export default function RegisterPage() {
 
           <FormControl size="lg" isInvalid={!!errors.password}>
             <FormControlLabel>
-              <FormControlLabelText size="xl">Password</FormControlLabelText>
+              <FormControlLabelText size="xl">
+                Mot de passe
+              </FormControlLabelText>
             </FormControlLabel>
-            <Input className="my-1" size="xl">
+            <Input size="xl">
               <InputField
-                placeholder="Enter your password"
+                placeholder="Entrez votre mot de passe"
                 autoCapitalize="none"
                 type={showPassword ? "text" : "password"}
                 value={watch("password")}
@@ -147,12 +152,12 @@ export default function RegisterPage() {
           <FormControl size="lg" isInvalid={!!errors.confirmPassword}>
             <FormControlLabel>
               <FormControlLabelText size="xl">
-                Confirm Password
+                Confirmation du mot de passe
               </FormControlLabelText>
             </FormControlLabel>
             <Input className="my-1" size="xl">
               <InputField
-                placeholder="Confirm your password"
+                placeholder="Confirmez votre mot de passe"
                 autoCapitalize="none"
                 type={showPassword ? "text" : "password"}
                 value={watch("confirmPassword")}
@@ -179,7 +184,7 @@ export default function RegisterPage() {
 
           <VStack space="sm">
             <Button variant="solid" size="md" onPress={handleSubmit(onSubmit)}>
-              <ButtonText>Sign Up</ButtonText>
+              <ButtonText>S'inscrire</ButtonText>
             </Button>
             <Button
               className=""
@@ -189,7 +194,7 @@ export default function RegisterPage() {
                 router.replace("/login");
               }}
             >
-              <ButtonText>Sign In</ButtonText>
+              <ButtonText>Se connecter</ButtonText>
             </Button>
           </VStack>
         </VStack>

@@ -48,13 +48,31 @@ export class UserService extends APIService {
     }
   }
 
+  async joinAccommodationByCode(
+    id: string,
+    data: { code: string },
+  ): Promise<UserResponse> {
+    try {
+      const response = await this.patch<{ code: string }, any>(
+        `/users/${id}/join`,
+        data,
+      );
+      return UserResponseSchema.parse(response.data);
+    } catch (error: any) {
+      throw {
+        message: error?.response?.data.message || "An unknown error occurred.",
+        status: error?.response?.status,
+      };
+    }
+  }
+
   async updateUserPasswordById(
     id: string,
     data: UserPatchPassword,
   ): Promise<UserResponse> {
     try {
       const response = await this.patch<UserPatchPassword, any>(
-        `/users/password/${id}`,
+        `/users/${id}/password`,
         data,
       );
       return UserResponseSchema.parse(response.data);
@@ -70,10 +88,7 @@ export class UserService extends APIService {
     try {
       const authService = new AuthService();
       await authService.logout();
-      const response = await this.delete(`/users/${id}`);
-      if (response.status !== 204) {
-        throw new Error("Failed to delete user.");
-      }
+      await this.delete(`/users/${id}`);
     } catch (error: any) {
       throw {
         message: error?.response?.data.message || "An unknown error occurred.",
