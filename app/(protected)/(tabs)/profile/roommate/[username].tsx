@@ -5,7 +5,6 @@ import {
   Alert,
   Text,
   View,
-  Modal,
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
@@ -24,10 +23,11 @@ import {
   FileText,
   Shield,
   UserMinus,
-  AlertTriangle,
 } from "lucide-react-native";
+import { InfoItem } from "@/components/ui/tabs/profile/accommodation/roommate/info-item";
+import { RemoveRoommateModal } from "@/components/ui/tabs/profile/accommodation/roommate/remove-roommate-modal";
 
-export default function RoommateProfile() {
+export default function RoommateProfileScreen() {
   const { username } = useLocalSearchParams();
   const [roommate, setRoommate] = useState<UserResponse | null>(null);
   const [user, setUser] = useState<UserResponse | null>(null);
@@ -268,67 +268,15 @@ export default function RoommateProfile() {
         )}
       </ScrollView>
 
-      <Modal
-        transparent={true}
-        visible={warningLeaveAccommodation}
-        animationType="fade"
-        onRequestClose={() => setWarningLeaveAccommodation(false)}
-      >
-        <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
-          <View className="bg-white p-6 rounded-2xl w-5/6 max-w-md">
-            <View className="items-center mb-4">
-              <View className="bg-red-100 p-3 rounded-full mb-2">
-                <AlertTriangle size={28} color="#ef4444" />
-              </View>
-              <Text className="text-xl font-bold text-gray-800">
-                Retirer le colocataire
-              </Text>
-            </View>
-            <Text className="text-gray-600 mb-6 text-center">
-              Êtes-vous sûr de vouloir que {roommate.username} quitte cette
-              colocation ? Il devra être à nouveau invité pour rejoindre.
-            </Text>
-            <View className="flex-row justify-between">
-              <TouchableOpacity
-                className="flex-1 mr-2 bg-gray-200 py-3 rounded-lg items-center"
-                onPress={() => setWarningLeaveAccommodation(false)}
-              >
-                <Text className="font-medium text-gray-800">Annuler</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="flex-1 ml-2 bg-red-600 py-3 rounded-lg items-center"
-                onPress={removeRoommate}
-              >
-                {actionLoading ? (
-                  <ActivityIndicator size="small" color="white" />
-                ) : (
-                  <Text className="font-medium text-white">Retirer</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {roommate && (
+        <RemoveRoommateModal
+          visible={warningLeaveAccommodation}
+          roommate={roommate}
+          actionLoading={actionLoading}
+          onClose={() => setWarningLeaveAccommodation(false)}
+          onConfirm={removeRoommate}
+        />
+      )}
     </SafeAreaView>
-  );
-}
-
-function InfoItem({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <HStack className="items-center">
-      <View className="w-8">{icon}</View>
-      <View>
-        <Text className="text-xs text-gray-500">{label}</Text>
-        <Text className="text-gray-800">{value}</Text>
-      </View>
-    </HStack>
   );
 }

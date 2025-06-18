@@ -5,7 +5,7 @@ const BaseAccommodationSchema = z.object({
     .string()
     .max(50, "Keep under 50 characters please")
     .nonempty("Required"),
-  code: z.string().max(12),
+  code: z.string().max(12).optional(),
   location: z
     .string()
     .max(30, "Keep under 30 characters please")

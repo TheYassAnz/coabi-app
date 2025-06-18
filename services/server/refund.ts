@@ -70,10 +70,7 @@ export class RefundService extends APIService {
 
   async deleteRefundById(id: string) {
     try {
-      const response = await this.delete(`/refunds/${id}`);
-      if (response.status !== 204) {
-        throw new Error("Failed to delete refund.");
-      }
+      await this.delete(`/refunds/${id}`);
     } catch (error: any) {
       throw {
         message: error?.response?.data.message || "An unknown error occurred.",
