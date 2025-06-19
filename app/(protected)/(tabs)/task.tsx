@@ -1,8 +1,18 @@
-import { Text, View, StyleSheet, Alert, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { TaskService } from "@/services/server/task";
 import { UserService } from "@/services/server/user";
 import { getUserByAccessToken } from "@/services/utils";
+import { TextInput, Platform } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function TaskScreen() {
   const [loading, setLoading] = useState(true);
@@ -76,9 +86,10 @@ export default function TaskScreen() {
       await taskService.createTask({
         name: formData.name,
         description: formData.description,
-        dueDate: formData.dueDate,
+        // dueDate: formData.dueDate,
         userId: selectedUserId,
         accommodationId: user.accommodationId,
+        weekly: false,
       });
 
       resetForm();
@@ -103,43 +114,166 @@ export default function TaskScreen() {
   const completedTasks = tasks.filter((t) => t.done);
 
   return (
-    <ScrollView style={{ padding: 20 }}>
-      <TaskCard title="Tâches en retard">
-        {overdueTasks.length === 0 ? (
-          <Text style={styles.emptyText}>Aucune tâche en retard</Text>
-        ) : (
-          overdueTasks.map((task) => (
-            <Text key={task._id} style={styles.taskText}>
-              • {task.name}
-            </Text>
-          ))
-        )}
-      </TaskCard>
+    <>
+      <ScrollView style={{ padding: 20 }}>
+        <TaskCard title="Tâches en retard">
+          {overdueTasks.length === 0 ? (
+            <Text style={styles.emptyText}>Aucune tâche en retard</Text>
+          ) : (
+            overdueTasks.map((task) => (
+              <Text key={task._id} style={styles.taskText}>
+                • {task.name}
+              </Text>
+            ))
+          )}
+        </TaskCard>
 
-      <TaskCard title="Tâches à venir">
-        {upcomingTasks.length === 0 ? (
-          <Text style={styles.emptyText}>Aucune tâche à venir</Text>
-        ) : (
-          upcomingTasks.map((task) => (
-            <Text key={task._id} style={styles.taskText}>
-              • {task.name}
-            </Text>
-          ))
-        )}
-      </TaskCard>
+        <TaskCard title="Tâches à venir">
+          {upcomingTasks.length === 0 ? (
+            <Text style={styles.emptyText}>Aucune tâche à venir</Text>
+          ) : (
+            upcomingTasks.map((task) => (
+              <Text key={task._id} style={styles.taskText}>
+                • {task.name}
+              </Text>
+            ))
+          )}
+        </TaskCard>
 
-      <TaskCard title="Tâches complétées">
-        {completedTasks.length === 0 ? (
-          <Text style={styles.emptyText}>Aucune tâche complétée</Text>
-        ) : (
-          completedTasks.map((task) => (
-            <Text key={task._id} style={styles.taskText}>
-              • {task.name}
-            </Text>
-          ))
-        )}
-      </TaskCard>
-    </ScrollView>
+        <TaskCard title="Tâches complétées">
+          {completedTasks.length === 0 ? (
+            <Text style={styles.emptyText}>Aucune tâche complétée</Text>
+          ) : (
+            completedTasks.map((task) => (
+              <Text key={task._id} style={styles.taskText}>
+                • {task.name}
+              </Text>
+            ))
+          )}
+        </TaskCard>
+      </ScrollView>
+
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => {
+          resetForm();
+          setModalVisible(true);
+        }}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.fabIcon}>+</Text>
+      </TouchableOpacity>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Nouvelle tâche</Text>
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={styles.closeButton}
+              >
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView
+              style={{ paddingHorizontal: 20 }}
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Nom de la tâche */}
+              <View style={{ marginVertical: 12 }}>
+                <Text style={styles.inputLabel}>Nom de la tâche</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={formData.name}
+                  onChangeText={(text) =>
+                    setFormData((prev) => ({ ...prev, name: text }))
+                  }
+                  placeholder="Nom de la tâche"
+                  maxLength={100}
+                />
+              </View>
+
+              {/* Description */}
+              <View style={{ marginVertical: 12 }}>
+                <Text style={styles.inputLabel}>Description (optionnelle)</Text>
+                <TextInput
+                  style={[styles.textInput, styles.textArea]}
+                  value={formData.description}
+                  onChangeText={(text) =>
+                    setFormData((prev) => ({ ...prev, description: text }))
+                  }
+                  placeholder="Description de la tâche"
+                  multiline={true}
+                  numberOfLines={3}
+                />
+              </View>
+
+              {/* Date limite */}
+              <View style={{ marginVertical: 12 }}>
+                <Text style={styles.inputLabel}>Date limite</Text>
+                <TouchableOpacity
+                  onPress={() => setShowDatePicker(true)}
+                  style={styles.dateButton}
+                >
+                  <Text style={styles.dateButtonText}>
+                    {formData.dueDate.toLocaleDateString("fr-FR")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {showDatePicker && (
+                <DateTimePicker
+                  value={formData.dueDate}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={(event, date) => {
+                    setShowDatePicker(false);
+                    if (date)
+                      setFormData((prev) => ({ ...prev, dueDate: date }));
+                  }}
+                />
+              )}
+
+              {/* Assignation */}
+              <View style={{ marginVertical: 12 }}>
+                <Text style={styles.inputLabel}>Assigner à</Text>
+                {members.map((member) => {
+                  const isSelected = selectedUserId === member._id;
+                  const isCurrentUser = member._id === user?._id;
+
+                  return (
+                    <TouchableOpacity
+                      key={member._id}
+                      style={styles.radioContainer}
+                      onPress={() => setSelectedUserId(member._id)}
+                    >
+                      <View
+                        style={[
+                          styles.radio,
+                          isSelected && styles.radioSelected,
+                        ]}
+                      >
+                        {isSelected ? <View style={styles.radioDot} /> : null}
+                      </View>
+                      <Text style={styles.radioLabel}>
+                        {member.firstName} {member.lastName}
+                        {isCurrentUser && " (moi)"}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 }
 
@@ -191,5 +325,65 @@ const styles = StyleSheet.create({
   emptyText: {
     fontStyle: "italic",
     color: "#9ca3af",
+  },
+  fab: {
+    position: "absolute",
+    bottom: 24,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#3b82f6",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  fabIcon: {
+    fontSize: 24,
+    color: "#ffffff",
+    fontWeight: "bold",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: "#ffffff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: "80%",
+    minHeight: "60%",
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#111827",
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#f3f4f6",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButtonText: {
+    fontSize: 18,
+    color: "#6b7280",
+    fontWeight: "bold",
   },
 });
