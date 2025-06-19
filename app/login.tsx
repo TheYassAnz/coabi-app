@@ -41,6 +41,7 @@ export default function LoginScreen() {
       const authService = new AuthService();
       const login = await authService.login(data);
       await SecureStore.setItemAsync("accessToken", login.accessToken);
+      // console.log("Token JWT:", login.accessToken);
       router.replace("/");
     } catch (error: any) {
       Alert.alert("Error", error.message);
