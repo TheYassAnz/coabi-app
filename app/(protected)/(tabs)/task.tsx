@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   Modal,
   ActivityIndicator,
+  Switch,
+  TextInput,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { TaskService } from "@/services/server/task";
 import { UserService } from "@/services/server/user";
 import { getUserByAccessToken } from "@/services/utils";
-import { TextInput, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function TaskScreen() {
@@ -56,6 +58,51 @@ export default function TaskScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const isPast = (date: Date) => new Date(date) < new Date();
+
+  const TaskItem = ({ task }: { task: any }) => {
+    const isOverdue = !task.done && isPast(task.dueDate);
+    const dueDate = new Date(task.dueDate);
+
+    const assignedUser = members.find((m) => m._id === task.userId);
+    const userName = assignedUser
+      ? `${assignedUser.firstName} ${assignedUser.lastName}`
+      : task.userId;
+
+    return (
+      <View style={styles.taskItem}>
+        <View style={styles.taskInfo}>
+          <Text style={styles.taskName}>{task.name}</Text>
+          {task.description ? (
+            <Text style={styles.taskDescription}>{task.description}</Text>
+          ) : null}
+          <View style={styles.taskMeta}>
+            <Text style={[styles.taskDate, isOverdue && styles.overdueDate]}>
+              {dueDate.toLocaleDateString("fr-FR")}
+            </Text>
+            <Text style={styles.taskAssignee}>Assigné à: {userName}</Text>
+          </View>
+        </View>
+
+        <View style={styles.taskActions}>
+          {!task.done && (
+            <Switch
+              value={false}
+              onValueChange={() => markTaskAsDone(task._id)}
+              disabled={updatingTaskId === task._id}
+              trackColor={{ false: "#e5e7eb", true: "#22c55e" }}
+              thumbColor={"#ffffff"}
+              style={styles.switch}
+            />
+          )}
+          {updatingTaskId === task._id && (
+            <ActivityIndicator size="small" color="#3b82f6" />
+          )}
+        </View>
+      </View>
+    );
   };
 
   const markTaskAsDone = async (taskId: string) => {
@@ -104,8 +151,6 @@ export default function TaskScreen() {
     }
   };
 
-  const isPast = (date: Date) => new Date(date) < new Date();
-
   useEffect(() => {
     fetchTasksAndMembers();
   }, []);
@@ -121,11 +166,7 @@ export default function TaskScreen() {
           {overdueTasks.length === 0 ? (
             <Text style={styles.emptyText}>Aucune tâche en retard</Text>
           ) : (
-            overdueTasks.map((task) => (
-              <Text key={task._id} style={styles.taskText}>
-                • {task.name}
-              </Text>
-            ))
+            overdueTasks.map((task) => <TaskItem key={task._id} task={task} />)
           )}
         </TaskCard>
 
@@ -133,11 +174,7 @@ export default function TaskScreen() {
           {upcomingTasks.length === 0 ? (
             <Text style={styles.emptyText}>Aucune tâche à venir</Text>
           ) : (
-            upcomingTasks.map((task) => (
-              <Text key={task._id} style={styles.taskText}>
-                • {task.name}
-              </Text>
-            ))
+            upcomingTasks.map((task) => <TaskItem key={task._id} task={task} />)
           )}
         </TaskCard>
 
@@ -146,9 +183,7 @@ export default function TaskScreen() {
             <Text style={styles.emptyText}>Aucune tâche complétée</Text>
           ) : (
             completedTasks.map((task) => (
-              <Text key={task._id} style={styles.taskText}>
-                • {task.name}
-              </Text>
+              <TaskItem key={task._id} task={task} />
             ))
           )}
         </TaskCard>
@@ -504,5 +539,53 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: "#9ca3af",
+  },
+  taskItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
+  },
+  taskInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+  taskName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  taskDescription: {
+    fontSize: 14,
+    color: "#6b7280",
+    marginBottom: 6,
+  },
+  taskMeta: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  taskDate: {
+    fontSize: 12,
+    color: "#9ca3af",
+  },
+  overdueDate: {
+    color: "#ef4444",
+    fontWeight: "600",
+  },
+  taskAssignee: {
+    fontSize: 12,
+    color: "#6b7280",
+    fontStyle: "italic",
+  },
+  taskActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  switch: {
+    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
   },
 });
