@@ -469,4 +469,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#374151",
   },
+  modalFooter: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#e5e7eb",
+    gap: 12,
+  },
+  cancelButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    alignItems: "center",
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#6b7280",
+  },
+  createButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    backgroundColor: "#3b82f6",
+    alignItems: "center",
+  },
+  createButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#ffffff",
+  },
+  disabledButton: {
+    backgroundColor: "#9ca3af",
+  },
 });
