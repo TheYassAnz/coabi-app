@@ -9,6 +9,7 @@ export default function TaskScreen() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [members, setMembers] = useState<any[]>([]);
+  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
 
   const taskService = new TaskService();
   const userService = new UserService();
@@ -35,6 +36,20 @@ export default function TaskScreen() {
       setLoading(false);
     }
   };
+
+  const markTaskAsDone = async (taskId: string) => {
+    try {
+      setUpdatingTaskId(taskId);
+      await taskService.updateTaskById(taskId, { done: true });
+      await fetchTasksAndMembers();
+    } catch (err: any) {
+      Alert.alert("Erreur", err.message || "Impossible de cocher la tâche");
+    } finally {
+      setUpdatingTaskId(null);
+    }
+  };
+
+  const isPast = (date: Date) => new Date(date) < new Date();
 
   useEffect(() => {
     fetchTasksAndMembers();
