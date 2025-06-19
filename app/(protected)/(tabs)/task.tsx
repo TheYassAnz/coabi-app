@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { TaskService } from "@/services/server/task";
@@ -270,6 +271,28 @@ export default function TaskScreen() {
                 })}
               </View>
             </ScrollView>
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Annuler</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.createButton,
+                  formLoading && styles.disabledButton,
+                ]}
+                onPress={handleCreateTask}
+                disabled={formLoading}
+              >
+                {formLoading ? (
+                  <ActivityIndicator color="#ffffff" size="small" />
+                ) : (
+                  <Text style={styles.createButtonText}>Créer</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
