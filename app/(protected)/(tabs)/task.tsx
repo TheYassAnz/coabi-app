@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Alert } from "react-native";
 import { useEffect, useState } from "react";
 import { TaskService } from "@/services/server/task";
 import { UserService } from "@/services/server/user";
@@ -12,6 +12,33 @@ export default function TaskScreen() {
 
   const taskService = new TaskService();
   const userService = new UserService();
+
+  const fetchTasksAndMembers = async () => {
+    try {
+      const userData = await getUserByAccessToken();
+      if (!userData) {
+        Alert.alert("Erreur", "Utilisateur non trouvé");
+        return;
+      }
+      setUser(userData);
+
+      const allTasks = await taskService.filterTasks({ userId: userData._id });
+      setTasks(allTasks);
+
+      const fetchedMembers = await userService.filterUsers({
+        accommodationId: userData.accommodationId,
+      });
+      setMembers(fetchedMembers);
+    } catch (error: any) {
+      Alert.alert("Erreur", error.message || "Chargement échoué");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasksAndMembers();
+  }, []);
 
   return (
     <View style={styles.container}>
