@@ -212,13 +212,11 @@ export default function TaskScreen() {
           {completedTasks.length === 0 ? (
             <EmptyState message="Aucune tâche terminée" />
           ) : (
-            completedTasks.map((task) => (
-              <TaskItem key={task._id} task={task} />
-            ))
+            completedTasks
+              .slice(0, 5)
+              .map((task) => <TaskItem key={task._id} task={task} />)
           )}
         </TaskCard>
-
-        {/* Espace pour éviter que le contenu soit caché par le bouton flottant */}
         <View style={{ height: 80 }} />
       </ScrollView>
 
