@@ -22,9 +22,20 @@ export const RefundBatchPostSchema = z.object({
 
 export const RefundResponseSchema = BaseRefundSchema.extend({
   _id: z.string(),
-  userId: z.string(),
-  roommateId: z.string(),
-  accommodationId: z.string(),
+  userId: z.union([
+    z.string(),
+    z.object({
+      _id: z.string(),
+      username: z.string(),
+    }),
+  ]),
+  roommateId: z.union([
+    z.string(),
+    z.object({
+      _id: z.string(),
+      username: z.string(),
+    }),
+  ]),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
