@@ -124,7 +124,7 @@ export default function TaskScreen() {
 
   const handleCreateTask = async () => {
     if (!formData.name.trim()) {
-      Alert.alert("Error", "Task name is required");
+      Alert.alert("Error", "Le nom de la tâche est requis");
       return;
     }
 
@@ -143,9 +143,9 @@ export default function TaskScreen() {
       resetForm();
       setModalVisible(false);
       await fetchTasksAndMembers();
-      Alert.alert("Success", "Task created successfully");
+      Alert.alert("Success", "Tâche créée avec succès");
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to create task");
+      Alert.alert("Error", err.message || "Impossible de créer la tâche");
     } finally {
       setFormLoading(false);
     }
@@ -161,8 +161,14 @@ export default function TaskScreen() {
 
   return (
     <>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Gestion des Tâches</Text>
+        <Text style={styles.headerSubtitle}>
+          Organisez et suivez vos tâches quotidiennes
+        </Text>
+      </View>
       <ScrollView style={{ padding: 20 }}>
-        <TaskCard title="Tâches en retard">
+        <TaskCard title="Tâches en retard" type="overdue">
           {overdueTasks.length === 0 ? (
             <Text style={styles.emptyText}>Aucune tâche en retard</Text>
           ) : (
@@ -170,7 +176,7 @@ export default function TaskScreen() {
           )}
         </TaskCard>
 
-        <TaskCard title="Tâches à venir">
+        <TaskCard title="Tâches à venir" type="upcoming">
           {upcomingTasks.length === 0 ? (
             <Text style={styles.emptyText}>Aucune tâche à venir</Text>
           ) : (
@@ -178,7 +184,7 @@ export default function TaskScreen() {
           )}
         </TaskCard>
 
-        <TaskCard title="Tâches complétées">
+        <TaskCard title="Tâches complétées" type="completed">
           {completedTasks.length === 0 ? (
             <Text style={styles.emptyText}>Aucune tâche complétée</Text>
           ) : (
@@ -338,14 +344,67 @@ export default function TaskScreen() {
 const TaskCard = ({
   title,
   children,
+  type,
 }: {
   title: string;
   children: React.ReactNode;
+  type: "overdue" | "upcoming" | "completed";
 }) => {
+  const getCardStyle = () => {
+    switch (type) {
+      case "overdue":
+        return styles.overdueCard;
+      case "upcoming":
+        return styles.upcomingCard;
+      case "completed":
+        return styles.completedCard;
+      default:
+        return styles.defaultCard;
+    }
+  };
+
+  const getIconColor = () => {
+    switch (type) {
+      case "overdue":
+        return "#ef4444";
+      case "upcoming":
+        return "#f59e0b";
+      case "completed":
+        return "#22c55e";
+      default:
+        return "#6b7280";
+    }
+  };
+
+  const getIcon = () => {
+    switch (type) {
+      case "overdue":
+        return "⚠️";
+      case "upcoming":
+        return "📋";
+      case "completed":
+        return "✅";
+      default:
+        return "📋";
+    }
+  };
+
   return (
-    <View style={styles.card}>
-      <Text style={styles.cardTitle}>{title}</Text>
-      {children}
+    <View style={[styles.card, getCardStyle()]}>
+      <View style={styles.cardHeader}>
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: getIconColor() + "20" },
+          ]}
+        >
+          <Text style={[styles.icon, { color: getIconColor() }]}>
+            {getIcon()}
+          </Text>
+        </View>
+        <Text style={styles.cardTitle}>{title}</Text>
+      </View>
+      <View style={styles.cardContent}>{children}</View>
     </View>
   );
 };
@@ -358,22 +417,43 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 20,
   },
-  card: {
-    marginBottom: 20,
-    padding: 16,
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
     backgroundColor: "#ffffff",
-    borderRadius: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: "#6b7280",
+  },
+  card: {
+    backgroundColor: "#ffffff",
+    marginHorizontal: 16,
+    marginVertical: 8,
+    borderRadius: 16,
     shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 2,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: "600",
-    marginBottom: 12,
-    color: "#1f2937",
+    color: "#111827",
+    flex: 1,
   },
   taskText: {
     fontSize: 16,
@@ -587,5 +667,45 @@ const styles = StyleSheet.create({
   },
   switch: {
     transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
+  },
+  overdueCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#ef4444",
+  },
+  upcomingCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#f59e0b",
+  },
+  completedCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#22c55e",
+  },
+  defaultCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#e5e7eb",
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  icon: {
+    fontSize: 20,
+  },
+  cardContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
 });
