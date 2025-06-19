@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Text,
   View,
@@ -11,11 +13,12 @@ import {
   TextInput,
   Platform,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { TaskService } from "@/services/server/task";
 import { UserService } from "@/services/server/user";
 import { getUserByAccessToken } from "@/services/utils";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function TaskScreen() {
   const [loading, setLoading] = useState(true);
@@ -53,6 +56,7 @@ export default function TaskScreen() {
         accommodationId: userData.accommodationId,
       });
       setMembers(fetchedMembers);
+      setSelectedUserId(fetchedMembers[0]?._id || userData._id);
     } catch (error: any) {
       Alert.alert("Erreur", error.message || "Chargement échoué");
     } finally {
@@ -124,7 +128,7 @@ export default function TaskScreen() {
 
   const handleCreateTask = async () => {
     if (!formData.name.trim()) {
-      Alert.alert("Error", "Le nom de la tâche est requis");
+      Alert.alert("Erreur", "Le nom de la tâche est requis");
       return;
     }
 
@@ -143,9 +147,9 @@ export default function TaskScreen() {
       resetForm();
       setModalVisible(false);
       await fetchTasksAndMembers();
-      Alert.alert("Success", "Tâche créée avec succès");
+      Alert.alert("Succès", "Tâche créée avec succès");
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Impossible de créer la tâche");
+      Alert.alert("Erreur", err.message || "Impossible de créer la tâche");
     } finally {
       setFormLoading(false);
     }
@@ -155,22 +159,42 @@ export default function TaskScreen() {
     fetchTasksAndMembers();
   }, []);
 
+  // Composant pour l'état vide
+  const EmptyState = ({ message }: { message: string }) => (
+    <View style={styles.emptyState}>
+      <Text style={styles.emptyStateText}>{message}</Text>
+    </View>
+  );
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3b82f6" />
+        <Text style={styles.loadingText}>Chargement...</Text>
+      </View>
+    );
+  }
+
   const upcomingTasks = tasks.filter((t) => !t.done && !isPast(t.dueDate));
   const overdueTasks = tasks.filter((t) => !t.done && isPast(t.dueDate));
   const completedTasks = tasks.filter((t) => t.done);
 
   return (
-    <>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Gestion des Tâches</Text>
-        <Text style={styles.headerSubtitle}>
-          Organisez et suivez vos tâches quotidiennes
-        </Text>
-      </View>
-      <ScrollView style={{ padding: 20 }}>
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Gestion des Tâches</Text>
+          <Text style={styles.headerSubtitle}>
+            Organisez et suivez vos tâches quotidiennes
+          </Text>
+        </View>
+
         <TaskCard title="Tâches en retard" type="overdue">
           {overdueTasks.length === 0 ? (
-            <Text style={styles.emptyText}>Aucune tâche en retard</Text>
+            <EmptyState message="Aucune tâche en retard" />
           ) : (
             overdueTasks.map((task) => <TaskItem key={task._id} task={task} />)
           )}
@@ -178,21 +202,24 @@ export default function TaskScreen() {
 
         <TaskCard title="Tâches à venir" type="upcoming">
           {upcomingTasks.length === 0 ? (
-            <Text style={styles.emptyText}>Aucune tâche à venir</Text>
+            <EmptyState message="Aucune tâche à venir" />
           ) : (
             upcomingTasks.map((task) => <TaskItem key={task._id} task={task} />)
           )}
         </TaskCard>
 
-        <TaskCard title="Tâches complétées" type="completed">
+        <TaskCard title="Tâches terminées" type="completed">
           {completedTasks.length === 0 ? (
-            <Text style={styles.emptyText}>Aucune tâche complétée</Text>
+            <EmptyState message="Aucune tâche terminée" />
           ) : (
             completedTasks.map((task) => (
               <TaskItem key={task._id} task={task} />
             ))
           )}
         </TaskCard>
+
+        {/* Espace pour éviter que le contenu soit caché par le bouton flottant */}
+        <View style={{ height: 80 }} />
       </ScrollView>
 
       <TouchableOpacity
@@ -223,12 +250,13 @@ export default function TaskScreen() {
                 <Text style={styles.closeButtonText}>✕</Text>
               </TouchableOpacity>
             </View>
+
             <ScrollView
-              style={{ paddingHorizontal: 20 }}
+              style={styles.modalBody}
               showsVerticalScrollIndicator={false}
             >
               {/* Nom de la tâche */}
-              <View style={{ marginVertical: 12 }}>
+              <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Nom de la tâche</Text>
                 <TextInput
                   style={styles.textInput}
@@ -242,7 +270,7 @@ export default function TaskScreen() {
               </View>
 
               {/* Description */}
-              <View style={{ marginVertical: 12 }}>
+              <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Description (optionnelle)</Text>
                 <TextInput
                   style={[styles.textInput, styles.textArea]}
@@ -257,7 +285,7 @@ export default function TaskScreen() {
               </View>
 
               {/* Date limite */}
-              <View style={{ marginVertical: 12 }}>
+              <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Date limite</Text>
                 <TouchableOpacity
                   onPress={() => setShowDatePicker(true)}
@@ -283,7 +311,7 @@ export default function TaskScreen() {
               )}
 
               {/* Assignation */}
-              <View style={{ marginVertical: 12 }}>
+              <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Assigner à</Text>
                 {members.map((member) => {
                   const isSelected = selectedUserId === member._id;
@@ -312,6 +340,7 @@ export default function TaskScreen() {
                 })}
               </View>
             </ScrollView>
+
             <View style={styles.modalFooter}>
               <TouchableOpacity
                 style={styles.cancelButton}
@@ -337,7 +366,7 @@ export default function TaskScreen() {
           </View>
         </View>
       </Modal>
-    </>
+    </View>
   );
 }
 
@@ -412,10 +441,22 @@ const TaskCard = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#f8fafc",
   },
-  scroll: {
-    padding: 20,
+  scrollContainer: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f8fafc",
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#6b7280",
+    fontWeight: "500",
   },
   header: {
     paddingHorizontal: 20,
@@ -449,20 +490,108 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  overdueCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#ef4444",
+  },
+  upcomingCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#f59e0b",
+  },
+  completedCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#22c55e",
+  },
+  defaultCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: "#e5e7eb",
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  icon: {
+    fontSize: 20,
+  },
   cardTitle: {
     fontSize: 18,
     fontWeight: "600",
     color: "#111827",
     flex: 1,
   },
-  taskText: {
+  cardContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  taskItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
+  },
+  taskInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+  taskName: {
     fontSize: 16,
-    color: "#374151",
+    fontWeight: "600",
+    color: "#111827",
     marginBottom: 4,
   },
-  emptyText: {
-    fontStyle: "italic",
+  taskDescription: {
+    fontSize: 14,
+    color: "#6b7280",
+    marginBottom: 6,
+  },
+  taskMeta: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  taskDate: {
+    fontSize: 12,
     color: "#9ca3af",
+  },
+  overdueDate: {
+    color: "#ef4444",
+    fontWeight: "600",
+  },
+  taskAssignee: {
+    fontSize: 12,
+    color: "#6b7280",
+    fontStyle: "italic",
+  },
+  taskActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  switch: {
+    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
+  },
+  emptyState: {
+    paddingVertical: 32,
+    alignItems: "center",
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: "#9ca3af",
+    fontStyle: "italic",
   },
   fab: {
     position: "absolute",
@@ -475,7 +604,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
@@ -523,6 +655,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#6b7280",
     fontWeight: "bold",
+  },
+  modalBody: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  inputGroup: {
+    marginVertical: 12,
   },
   inputLabel: {
     fontSize: 16,
@@ -619,93 +758,5 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: "#9ca3af",
-  },
-  taskItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
-  },
-  taskInfo: {
-    flex: 1,
-    marginRight: 12,
-  },
-  taskName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 4,
-  },
-  taskDescription: {
-    fontSize: 14,
-    color: "#6b7280",
-    marginBottom: 6,
-  },
-  taskMeta: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  taskDate: {
-    fontSize: 12,
-    color: "#9ca3af",
-  },
-  overdueDate: {
-    color: "#ef4444",
-    fontWeight: "600",
-  },
-  taskAssignee: {
-    fontSize: 12,
-    color: "#6b7280",
-    fontStyle: "italic",
-  },
-  taskActions: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  switch: {
-    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
-  },
-  overdueCard: {
-    borderLeftWidth: 4,
-    borderLeftColor: "#ef4444",
-  },
-  upcomingCard: {
-    borderLeftWidth: 4,
-    borderLeftColor: "#f59e0b",
-  },
-  completedCard: {
-    borderLeftWidth: 4,
-    borderLeftColor: "#22c55e",
-  },
-  defaultCard: {
-    borderLeftWidth: 4,
-    borderLeftColor: "#e5e7eb",
-  },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  icon: {
-    fontSize: 20,
-  },
-  cardContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
   },
 });
