@@ -11,6 +11,16 @@ export default function TaskScreen() {
   const [members, setMembers] = useState<any[]>([]);
   const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    dueDate: new Date(),
+  });
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   const taskService = new TaskService();
   const userService = new UserService();
 
@@ -49,6 +59,39 @@ export default function TaskScreen() {
     }
   };
 
+  const resetForm = () => {
+    setFormData({ name: "", description: "", dueDate: new Date() });
+    setSelectedUserId(members[0]?._id || user?._id || "");
+  };
+
+  const handleCreateTask = async () => {
+    if (!formData.name.trim()) {
+      Alert.alert("Error", "Task name is required");
+      return;
+    }
+
+    try {
+      setFormLoading(true);
+
+      await taskService.createTask({
+        name: formData.name,
+        description: formData.description,
+        dueDate: formData.dueDate,
+        userId: selectedUserId,
+        accommodationId: user.accommodationId,
+      });
+
+      resetForm();
+      setModalVisible(false);
+      await fetchTasksAndMembers();
+      Alert.alert("Success", "Task created successfully");
+    } catch (err: any) {
+      Alert.alert("Error", err.message || "Failed to create task");
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
   const isPast = (date: Date) => new Date(date) < new Date();
 
   useEffect(() => {
@@ -63,26 +106,36 @@ export default function TaskScreen() {
     <ScrollView style={{ padding: 20 }}>
       <TaskCard title="Tâches en retard">
         {overdueTasks.length === 0 ? (
-          <Text>Aucune tâche en retard</Text>
+          <Text style={styles.emptyText}>Aucune tâche en retard</Text>
         ) : (
-          overdueTasks.map((task) => <Text key={task._id}>- {task.name}</Text>)
+          overdueTasks.map((task) => (
+            <Text key={task._id} style={styles.taskText}>
+              • {task.name}
+            </Text>
+          ))
         )}
       </TaskCard>
 
       <TaskCard title="Tâches à venir">
         {upcomingTasks.length === 0 ? (
-          <Text>Aucune tâche à venir</Text>
+          <Text style={styles.emptyText}>Aucune tâche à venir</Text>
         ) : (
-          upcomingTasks.map((task) => <Text key={task._id}>- {task.name}</Text>)
+          upcomingTasks.map((task) => (
+            <Text key={task._id} style={styles.taskText}>
+              • {task.name}
+            </Text>
+          ))
         )}
       </TaskCard>
 
       <TaskCard title="Tâches complétées">
         {completedTasks.length === 0 ? (
-          <Text>Aucune tâche complétée</Text>
+          <Text style={styles.emptyText}>Aucune tâche complétée</Text>
         ) : (
           completedTasks.map((task) => (
-            <Text key={task._id}>- {task.name}</Text>
+            <Text key={task._id} style={styles.taskText}>
+              • {task.name}
+            </Text>
           ))
         )}
       </TaskCard>
@@ -98,20 +151,8 @@ const TaskCard = ({
   children: React.ReactNode;
 }) => {
   return (
-    <View
-      style={{
-        marginBottom: 20,
-        padding: 16,
-        backgroundColor: "#fff",
-        borderRadius: 8,
-        shadowColor: "#000",
-        shadowOpacity: 0.05,
-        shadowOffset: { width: 0, height: 1 },
-      }}
-    >
-      <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 12 }}>
-        {title}
-      </Text>
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>{title}</Text>
       {children}
     </View>
   );
@@ -120,10 +161,35 @@ const TaskCard = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#f9fafb",
   },
-  text: {
-    color: "#000000",
+  scroll: {
+    padding: 20,
+  },
+  card: {
+    marginBottom: 20,
+    padding: 16,
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 2,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 12,
+    color: "#1f2937",
+  },
+  taskText: {
+    fontSize: 16,
+    color: "#374151",
+    marginBottom: 4,
+  },
+  emptyText: {
+    fontStyle: "italic",
+    color: "#9ca3af",
   },
 });
